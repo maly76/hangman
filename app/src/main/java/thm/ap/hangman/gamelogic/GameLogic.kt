@@ -1,21 +1,77 @@
 package thm.ap.hangman.gamelogic
 
+
+// function for testing and playing on console
+fun main() {
+    val gameLogic = GameLogic()
+
+    print("Word: " + gameLogic.getHiddenWord() + "\n")
+
+    while (gameLogic.tries < gameLogic.amountTries) {
+        print("Please guess a letter: ")
+        if (gameLogic.checkLetter(readLine()!![0])) {
+            println(gameLogic.getHiddenWord())
+        } else {
+            println("Try " + gameLogic.tries + " of " + gameLogic.amountTries)
+        }
+    }
+    println("Game Over!\nThe word was " + gameLogic.wordToGuess)
+}
+
 class GameLogic {
-    val wordToGuess = "testword"
+//    val wordToGuess = "The quick brown fox jumps over the lazy dog äöü"
+    val wordToGuess = "testWord"
+    private var hiddenWord = ""
     var tries = 0
     val amountTries = 8
 
-    val letters = List<Letter>(29) {
-        var c = 'A'
-        Letter(c + it)
+    init {
+        generateHiddenWord()
     }
 
-    fun checkLetter(letter: Char): Boolean {
-        this.tries++
-        if (tries >= amountTries) {
-            print("Game Over!")
+    val letters = List<Letter>(29) {
+        var c = 'A'
+        when (it) {
+            26 -> c = 'Ä'
+            27 -> c = 'Ö'
+            28 -> c = 'Ü'
+            else -> c += it // Normal Letters A-Z
         }
-        return wordToGuess.contains(letter, true)
+        Letter(c)
+    }
+
+    fun getHiddenWord(): String {
+        return hiddenWord
+    }
+
+    private fun generateHiddenWord() {
+        this.hiddenWord = this.wordToGuess.replace(Regex("""[a-zA-Z'äöüÄÖÜ]"""), "_")
+    }
+
+    private fun updateHiddenWord(c: Char) {
+        //get index of chars from original
+        var index: Int = this.wordToGuess.indexOf(c)
+        while (index >= 0) {
+            // replace all matching indices with the correct char
+            val sb = StringBuilder(hiddenWord).also { it.setCharAt(index, c)}
+            this.hiddenWord = sb.toString()
+            index = this.wordToGuess.indexOf(c, index + 1)
+        }
+    }
+
+    fun checkLetter(c: Char): Boolean {
+        val char = c.uppercaseChar()
+        val letter = this.letters.find { it.letter == char} ?: return false
+        return if (wordToGuess.contains(letter.letter, true)) {
+            letter.setStatus(true)
+            updateHiddenWord(c.lowercaseChar())
+            updateHiddenWord(c.uppercaseChar())
+            true
+        } else {
+            letter.setStatus(false)
+            this.tries++
+            false
+        }
     }
 }
 
@@ -31,6 +87,14 @@ class Letter(val letter: Char) {
             this.status = LetterStatus.RIGHT
         } else {
             this.status = LetterStatus.WRONG
+        }
+    }
+
+    fun getStatus(): String {
+        return when (this.status) {
+            LetterStatus.NOT_GUESSED -> "not guessed"
+            LetterStatus.RIGHT -> "right"
+            LetterStatus.WRONG -> "wrong"
         }
     }
 
