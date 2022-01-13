@@ -19,8 +19,8 @@ fun main() {
 }
 
 class GameLogic {
-//    val wordToGuess = "The quick brown fox jumps over the lazy dog äöü"
-    val wordToGuess = "testWord"
+    val wordToGuess = "The quick brown fox jumps over the lazy dog äöü"
+//    val wordToGuess = "Test Wort"
     private var hiddenWord = ""
     var tries = 0
     val amountTries = 8

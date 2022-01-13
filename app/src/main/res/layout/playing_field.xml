@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -32,7 +33,7 @@
         <TextView
             android:id="@+id/guessWord"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginStart="8dp"
@@ -82,7 +83,9 @@
                 android:padding="0dp"
                 android:layout_height="wrap_content"
                 android:text="C"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="TouchTargetSizeCheck"
+                android:clickable="false"
+                android:backgroundTint="#b11"/>
 
             <Button
                 android:id="@+id/letterD"
@@ -215,7 +218,9 @@
                 android:padding="0dp"
                 android:layout_height="wrap_content"
                 android:text="P"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="TouchTargetSizeCheck"
+                android:clickable="false"
+                android:backgroundTint="#1b1"/>
 
             <Button
                 android:id="@+id/letterQ"
