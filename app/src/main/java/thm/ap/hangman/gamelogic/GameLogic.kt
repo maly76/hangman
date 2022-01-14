@@ -1,35 +1,36 @@
 package thm.ap.hangman.gamelogic
 
+import java.util.*
+
 
 // function for testing and playing on console
-fun main() {
-    val gameLogic = GameLogic()
-
-    print("Word: " + gameLogic.getHiddenWord() + "\n")
-
-    while (gameLogic.tries < gameLogic.amountTries) {
-        print("Please guess a letter: ")
-        if (gameLogic.checkLetter(readLine()!![0])) {
-            println(gameLogic.getHiddenWord())
-        } else {
-            println("Try " + gameLogic.tries + " of " + gameLogic.amountTries)
-        }
-    }
-    println("Game Over!\nThe word was " + gameLogic.wordToGuess)
-}
+//fun main() {
+//    val gameLogic = GameLogic()
+//    print("Word: " + gameLogic.getHiddenWord() + "\n")
+//
+//    while (gameLogic.tries < gameLogic.amountTries) {
+//        print("Please guess a letter: ")
+//        if (gameLogic.checkLetter(readLine()!![0])) {
+//            println(gameLogic.getHiddenWord())
+//        } else {
+//            println("Try " + gameLogic.tries + " of " + gameLogic.amountTries)
+//        }
+//    }
+//    println("Game Over!\nThe word was " + gameLogic.wordToGuess)
+//}
 
 class GameLogic {
-    val wordToGuess = "The quick brown fox jumps over the lazy dog äöü"
-//    val wordToGuess = "Test Wort"
-    private var hiddenWord = ""
-    var tries = 0
-    val amountTries = 8
+//    private val wordToGuess = "The quick brown fox jumps over the lazy dog (äöü)"
+    private val wordToGuess = "Du bist die Beste"
+    private lateinit var hiddenWord: String
+    private var tries = 0
+    private val amountTries = 8
 
     init {
         generateHiddenWord()
     }
 
-    val letters = List<Letter>(29) {
+    private val letters = List<Letter>(29) {
         var c = 'A'
         when (it) {
             26 -> c = 'Ä'
@@ -41,7 +42,35 @@ class GameLogic {
     }
 
     fun getHiddenWord(): String {
-        return hiddenWord
+        val sb = StringBuilder()
+        for (element in hiddenWord) {
+            sb.append(element)
+            sb.append(" ")
+        }
+        return sb.toString()
+    }
+
+    fun getTries(): Int {
+        return tries
+    }
+
+    fun getAmountTries(): Int {
+        return amountTries
+    }
+
+    fun guessWord(word: String): Boolean {
+        println("guessing word: $word solution: $wordToGuess")
+        return if (word.lowercase(Locale.getDefault()) == wordToGuess.lowercase(Locale.getDefault())) {
+            hiddenWord = wordToGuess
+            true
+        } else {
+            tries++
+            false
+        }
+    }
+
+    fun checkIfWon(): Boolean {
+        return hiddenWord == wordToGuess
     }
 
     private fun generateHiddenWord() {

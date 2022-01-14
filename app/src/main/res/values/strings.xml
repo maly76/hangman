@@ -2,6 +2,6 @@
     <string name="app_name">hangman</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="guess_word">Guess Word</string>
-    <string name="wordToGuess">P _ _ _ _ _ _ _ _ _</string>
+    <string name="wordToGuess">Placeholder</string>
     <string name="guess">Guess</string>
 </resources>
