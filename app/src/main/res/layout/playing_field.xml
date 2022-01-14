@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".PlayingFieldActivity">
 
     <TextView
         android:id="@+id/hangmanPlaceholder"
@@ -13,11 +14,11 @@
         android:gravity="center"
         android:text="Hangman\nPlaceholder"
         android:textSize="40sp"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="80dp"/>
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"/>
 
     <TextView
-        android:id="@+id/wordToGuess"
+        android:id="@+id/word"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -30,20 +31,23 @@
         android:layout_marginTop="40sp"
         android:orientation="horizontal">
 
-        <TextView
+        <EditText
             android:id="@+id/guessWord"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:ems="10"
+            android:inputType="textPersonName"
             android:layout_marginStart="8dp"
-            android:text="@string/guess_word" />
+            android:layout_marginEnd="8dp"
+            android:text="" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/guessButton"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/guess" />
     </LinearLayout>
@@ -84,8 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="C"
                 tools:ignore="TouchTargetSizeCheck"
-                android:clickable="false"
-                android:backgroundTint="#b11"/>
+                android:clickable="false"/>
 
             <Button
                 android:id="@+id/letterD"
@@ -219,8 +222,7 @@
                 android:layout_height="wrap_content"
                 android:text="P"
                 tools:ignore="TouchTargetSizeCheck"
-                android:clickable="false"
-                android:backgroundTint="#1b1"/>
+                android:clickable="false"/>
 
             <Button
                 android:id="@+id/letterQ"
