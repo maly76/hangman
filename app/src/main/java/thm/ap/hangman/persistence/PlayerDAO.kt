@@ -23,10 +23,17 @@ class PlayerDAO {
             }
             players.value = plrs
         }
+
         return players
     }
 
-    fun addPlayer(player: Player) = playersRef.document().set(player)
+    fun addPlayer(player: Player) {
+        if (player.id.isNotEmpty()) {
+            playersRef.document(player.id).set(player)
+        } else {
+            playersRef.document().set(player)
+        }
+    }
 
     fun updatePlayer(player: Player) = playersRef.document(player.id).set(player)
 

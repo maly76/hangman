@@ -7,15 +7,17 @@ import thm.ap.hangman.models.Category
 import thm.ap.hangman.models.Competition
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
-import thm.ap.hangman.persistence.CategoryDAO
-import thm.ap.hangman.persistence.CompetitionDAO
-import thm.ap.hangman.persistence.PlayerDAO
-import thm.ap.hangman.persistence.StatisticDAO
+import thm.ap.hangman.persistence.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    val auth = Auth()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth.authenticate()
+
+        /** register */
+        //auth.add(true, null, null)
 
         /*val categoryDAO = CategoryDAO()
 
@@ -25,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         categoryDAO.getCategories().observe(this, {
             Log.e("Test", it[0].id)
-        })*/
+        })
 
         val competitionDAO = CompetitionDAO()
         val competition = Competition()
@@ -37,10 +39,8 @@ class MainActivity : AppCompatActivity() {
         stat.longestWord = "Immatrikulation"
         stat.losses = 4
         stat.wins = 5
-        statsDAO.addStatistic(stat)
-
-
-
+        statsDAO.addStatistic(stat)*/
+        //auth.add("example123@gmail.com", "ABCD")
 
         setContentView(R.layout.activity_main)
     }
