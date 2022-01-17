@@ -8,27 +8,38 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Competition
 
 class CompetitionDAO {
-    val CompetitionsRef: CollectionReference = Firebase.firestore.collection("competitions")
+    private val CompetitionsRef: CollectionReference = Firebase.firestore.collection("competitions")
+    val competitionsObserver: MutableLiveData<List<Competition>> by lazy {
+        refreshCompetitions()
+        MutableLiveData<List<Competition>>()
+    }
 
-    fun getCompetitions(): MutableLiveData<List<Competition>> {
-        val competitions: MutableLiveData<List<Competition>> by lazy {
-            MutableLiveData<List<Competition>>()
-        }
-
+    private fun refreshCompetitions() {
         CompetitionsRef.get().addOnSuccessListener {
             val compts = mutableListOf<Competition>()
             it.forEach { doc ->
                 val competition = doc.toObject<Competition>()
                 compts.add(competition)
             }
-            competitions.value = compts
+            competitionsObserver.value = compts
         }
-        return competitions
     }
 
-    fun addCompetition(competition: Competition) = CompetitionsRef.document().set(competition)
+    fun addCompetition(competition: Competition) {
+        CompetitionsRef.document().set(competition).addOnSuccessListener {
+            refreshCompetitions()
+        }
+    }
 
-    fun updateCompetition(competition: Competition) = CompetitionsRef.document(competition.id).set(competition)
+    fun updateCompetition(competition: Competition) {
+        CompetitionsRef.document(competition.id).set(competition).addOnSuccessListener {
+            refreshCompetitions()
+        }
+    }
 
-    fun deleteCompetition(competition: Competition) = CompetitionsRef.document(competition.id).delete()
+    fun deleteCompetition(competition: Competition) {
+        CompetitionsRef.document(competition.id).delete().addOnSuccessListener {
+            refreshCompetitions()
+        }
+    }
 }

@@ -1,3 +1,4 @@
+
 package thm.ap.hangman.persistence
 
 import androidx.lifecycle.MutableLiveData
@@ -9,27 +10,38 @@ import thm.ap.hangman.models.Category
 
 
 class CategoryDAO {
-    val categoriesRef: CollectionReference = Firebase.firestore.collection("categories")
+    private val categoriesRef: CollectionReference = Firebase.firestore.collection("categories")
+    val categoriesObserver: MutableLiveData<List<Category>> by lazy {
+        refreshCategories()
+        MutableLiveData<List<Category>>()
+    }
 
-    fun getCategories(): MutableLiveData<List<Category>> {
-        val categories: MutableLiveData<List<Category>> by lazy {
-            MutableLiveData<List<Category>>()
-        }
-
+    private fun refreshCategories() {
         categoriesRef.get().addOnSuccessListener {
             val cats = mutableListOf<Category>()
             it.forEach { doc ->
                 val category = doc.toObject<Category>()
                 cats.add(category)
             }
-            categories.value = cats
+            categoriesObserver.value = cats
         }
-        return categories
     }
 
-    fun addCategory(category: Category) = categoriesRef.document().set(category)
+    fun addCategory(category: Category) {
+        categoriesRef.document().set(category).addOnSuccessListener {
+            refreshCategories()
+        }
+    }
 
-    fun updateCategory(category: Category) = categoriesRef.document(category.id).set(category)
+    fun updateCategory(category: Category) {
+        categoriesRef.document(category.id).set(category).addOnSuccessListener {
+            refreshCategories()
+        }
+    }
 
-    fun deleteCategory(category: Category) = categoriesRef.document(category.id).delete()
+    fun deleteCategory(category: Category) {
+        categoriesRef.document(category.id).delete().addOnSuccessListener {
+            refreshCategories()
+        }
+    }
 }
