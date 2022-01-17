@@ -12,4 +12,8 @@ data class Statistic(
     var winLosRate: Double = 0.0
     var longestWord: String? = null
     var winstreak: Int = 0
+
+    fun calculateRate() {
+        winLosRate = (wins / losses).toDouble()
+    }
 }
