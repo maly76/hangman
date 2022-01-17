@@ -5,7 +5,7 @@ import java.io.Serializable
 
 data class Player(
     @set:DocumentId
-    var id: String
+    var id: String = ""
 ): Serializable {
     var userName: String? = null
     var statistic: Statistic? = null

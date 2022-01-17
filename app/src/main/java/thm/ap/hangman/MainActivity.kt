@@ -1,7 +1,9 @@
 package thm.ap.hangman
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import thm.ap.hangman.models.Category
 import thm.ap.hangman.models.Competition
@@ -14,33 +16,12 @@ class MainActivity : AppCompatActivity() {
     val auth = Auth()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth.authenticate()
-
-        /** register */
-        //auth.add(true, null, null)
-
-        /*val categoryDAO = CategoryDAO()
-
-        val category = Category()
-        category.catName = "Spiel"
-        categoryDAO.addCategory(category)
-
-        categoryDAO.getCategories().observe(this, {
-            Log.e("Test", it[0].id)
-        })
-
-        val competitionDAO = CompetitionDAO()
-        val competition = Competition()
-        competition.roomCode = "ABC"
-        competitionDAO.addCompetition(competition)
-
-        val statsDAO = StatisticDAO()
-        val stat = Statistic()
-        stat.longestWord = "Immatrikulation"
-        stat.losses = 4
-        stat.wins = 5
-        statsDAO.addStatistic(stat)*/
-        //auth.add("example123@gmail.com", "ABCD")
+        if (auth.authenticate()) {
+            Toast.makeText(this, "You are logged in", Toast.LENGTH_SHORT).show()
+        } else {
+            // TODO: sign in OR sign up
+            throw NotImplementedError();
+        }
 
         setContentView(R.layout.activity_main)
     }
