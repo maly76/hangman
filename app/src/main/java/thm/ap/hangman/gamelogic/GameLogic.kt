@@ -21,10 +21,10 @@ import java.util.*
 
 class GameLogic {
 //    private val wordToGuess = "The quick brown fox jumps over the lazy dog (äöü)"
-    private val wordToGuess = "Du bist die Beste"
+    private var wordToGuess = "Zucchini"
     private lateinit var hiddenWord: String
     private var tries = 0
-    private val amountTries = 8
+    private val amountTries = 10
 
     init {
         generateHiddenWord()
@@ -41,6 +41,14 @@ class GameLogic {
         Letter(c)
     }
 
+    fun setWord(word: String) {
+        this.wordToGuess = word
+    }
+
+    fun getTries(): Int {
+        return tries
+    }
+
     fun getHiddenWord(): String {
         val sb = StringBuilder()
         for (element in hiddenWord) {
@@ -48,10 +56,6 @@ class GameLogic {
             sb.append(" ")
         }
         return sb.toString()
-    }
-
-    fun getTries(): Int {
-        return tries
     }
 
     fun getAmountTries(): Int {
