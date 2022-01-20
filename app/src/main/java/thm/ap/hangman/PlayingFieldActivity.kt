@@ -28,7 +28,7 @@ class PlayingFieldActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         updateHiddenWord()
-        binding.hangmanPlaceholder.text = "Try ${gameLogic.getTries()} of ${gameLogic.getAmountTries()}"
+        //TODO: write wordToGuess to DB
     }
 
     @SuppressLint("SetTextI18n")
@@ -55,23 +55,33 @@ class PlayingFieldActivity : AppCompatActivity() {
 
     private fun updateHiddenWord() {
         binding.word.text = gameLogic.getHiddenWord()
+        //TODO: write hidden Word to DB; gameLogic.getHiddenWord()
     }
 
     private fun updateTries() {
-        if (gameLogic.getTries() > gameLogic.getAmountTries()-1) {
-            gameLost()
-        } else {
-            binding.hangmanPlaceholder.text =
-                "Try ${gameLogic.getTries()} of ${gameLogic.getAmountTries()}"
+        when (gameLogic.getTries()) {
+            1 -> binding.imageView.setImageResource(R.drawable.hangman_1)
+            2 -> binding.imageView.setImageResource(R.drawable.hangman_2)
+            3 -> binding.imageView.setImageResource(R.drawable.hangman_3)
+            4 -> binding.imageView.setImageResource(R.drawable.hangman_4)
+            5 -> binding.imageView.setImageResource(R.drawable.hangman_5)
+            6 -> binding.imageView.setImageResource(R.drawable.hangman_6)
+            7 -> binding.imageView.setImageResource(R.drawable.hangman_7)
+            8 -> binding.imageView.setImageResource(R.drawable.hangman_8)
+            9 -> binding.imageView.setImageResource(R.drawable.hangman_9)
+            10 -> binding.imageView.setImageResource(R.drawable.hangman_10)
+            11 -> binding.imageView.setImageResource(R.drawable.hangman_11)
+            else -> binding.imageView.setImageResource(R.drawable.hangman_11)
         }
+        //TODO: write tries to DB; gameLogic.getTries()
     }
 
     private fun gameWon() {
-        binding.hangmanPlaceholder.text = "You Won!" //TODO go to results
+//        binding.hangmanPlaceholder.text = "You Won!" //TODO go to results
     }
 
     private fun gameLost() {
-        binding.hangmanPlaceholder.text = "You Lose!" //TODO go to results
+//        binding.hangmanPlaceholder.text = "You Lose!" //TODO go to results
     }
 
     private fun bindButtons() {

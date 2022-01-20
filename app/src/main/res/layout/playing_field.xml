@@ -7,15 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".PlayingFieldActivity">
 
-    <TextView
-        android:id="@+id/hangmanPlaceholder"
+
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Hangman\nPlaceholder"
-        android:textSize="40sp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="40dp"/>
+        android:layout_height="300dp"
+        app:srcCompat="@drawable/hangman_0" />
 
     <TextView
         android:id="@+id/word"
@@ -359,5 +356,6 @@
         </TableRow>
 
     </TableLayout>
+
 
 </LinearLayout>
