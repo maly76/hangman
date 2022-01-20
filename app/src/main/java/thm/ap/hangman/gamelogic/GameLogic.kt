@@ -3,24 +3,7 @@ package thm.ap.hangman.gamelogic
 import java.util.*
 
 
-// function for testing and playing on console
-//fun main() {
-//    val gameLogic = GameLogic()
-//    print("Word: " + gameLogic.getHiddenWord() + "\n")
-//
-//    while (gameLogic.tries < gameLogic.amountTries) {
-//        print("Please guess a letter: ")
-//        if (gameLogic.checkLetter(readLine()!![0])) {
-//            println(gameLogic.getHiddenWord())
-//        } else {
-//            println("Try " + gameLogic.tries + " of " + gameLogic.amountTries)
-//        }
-//    }
-//    println("Game Over!\nThe word was " + gameLogic.wordToGuess)
-//}
-
 class GameLogic {
-//    private val wordToGuess = "The quick brown fox jumps over the lazy dog (äöü)"
     private var wordToGuess = "Zucchini"
     private lateinit var hiddenWord: String
     private var tries = 0
