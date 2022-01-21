@@ -1,15 +1,20 @@
 package thm.ap.hangman.persistence
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import thm.ap.hangman.R
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
+import thm.ap.hangman.models.Status
 
-class Auth {
+class Auth (val context: Context) {
     private val playerDAO = PlayerDAO()
 
     fun authenticate (): Boolean {
@@ -25,14 +30,27 @@ class Auth {
         }
     }
 
-    fun signIn() {
-        Firebase.auth.signInAnonymously().addOnCompleteListener {task ->
-            if (task.isSuccessful) {
-                createPlayer("Anonymous")
-            } else {
-                Log.e(TAG, "Sign up anonymously failed")
+    fun signIn(acct: GoogleSignInAccount) {
+        val auth = Firebase.auth
+        val credential = PlayGamesAuthProvider.getCredential(acct.serverAuthCode!!)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.i(TAG, getString(R.string.auth_success))
+                    Toast.makeText(context, R.string.auth_success,
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.e(TAG, getString(R.string.auth_fail))
+                    Toast.makeText(context, R.string.auth_fail,
+                        Toast.LENGTH_SHORT).show()
+                }
             }
-        }
+    }
+
+    fun signout() {
+        Firebase.auth.signOut()
     }
 
     fun signUp(email: String, password: String) {
@@ -41,7 +59,7 @@ class Auth {
             val credential = EmailAuthProvider.getCredential(email, password)
             auth.currentUser!!.linkWithCredential(credential).addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    Log.e(TAG, "Register failed")
+                    show(R.string.signup_fail)
                 }
             }
         } else {
@@ -54,13 +72,30 @@ class Auth {
         }
     }
 
+    fun signUp() {
+        Firebase.auth.signInAnonymously().addOnCompleteListener {task ->
+            if (task.isSuccessful) {
+                createPlayer("Anonymous")
+            } else {
+                Log.e(TAG, getString(R.string.signup_fail))
+                show(R.string.signup_fail)
+            }
+        }
+    }
+
+    fun show(resId: Int) {
+        Toast.makeText(context, resId,
+            Toast.LENGTH_SHORT).show()
+    }
+
+    fun getString(resId: Int): String {
+        return context.getString(resId)
+    }
+
     private fun createPlayer(userName: String) {
         val user = Firebase.auth.currentUser
         if (user != null) {
-            val player = Player()
-            player.id = user.uid
-            player.statistic = Statistic()
-            player.userName = userName
+            val player = Player.new(user.uid, userName, Statistic.empty(), Status.OFFLINE)
             playerDAO.addPlayer(player)
         }
     }

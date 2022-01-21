@@ -3,7 +3,7 @@ package thm.ap.hangman.models
 import com.google.firebase.firestore.DocumentId
 import java.io.Serializable
 
-data class Statistic(
+data class Statistic private constructor(
     @set:DocumentId
     var id: String = ""
 ): Serializable {
@@ -15,5 +15,11 @@ data class Statistic(
 
     fun calculateRate() {
         winLosRate = (wins / losses).toDouble()
+    }
+
+    companion object {
+        fun empty(): Statistic {
+            return Statistic()
+        }
     }
 }

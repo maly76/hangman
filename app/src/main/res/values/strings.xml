@@ -2,4 +2,8 @@
     <string name="app_name">hangman</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="auth_success">Authentication successfully</string>
+    <string name="auth_fail">Authentication successfully</string>
+    <string name="signin_fail">sign in successfully</string>
+    <string name="signup_fail">sign up successfully</string>
 </resources>
