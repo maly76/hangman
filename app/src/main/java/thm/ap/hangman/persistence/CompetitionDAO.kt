@@ -8,14 +8,14 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Competition
 
 class CompetitionDAO {
-    private val CompetitionsRef: CollectionReference = Firebase.firestore.collection("competitions")
+    private val competitionsRef: CollectionReference = Firebase.firestore.collection("competitions")
     val competitionsObserver: MutableLiveData<List<Competition>> by lazy {
         refreshCompetitions()
         MutableLiveData<List<Competition>>()
     }
 
     private fun refreshCompetitions() {
-        CompetitionsRef.get().addOnSuccessListener {
+        competitionsRef.get().addOnSuccessListener {
             val compts = mutableListOf<Competition>()
             it.forEach { doc ->
                 val competition = doc.toObject<Competition>()
@@ -25,20 +25,35 @@ class CompetitionDAO {
         }
     }
 
+    fun subscribeCompetition(id: String): MutableLiveData<Competition> {
+
+        val competitionObserver: MutableLiveData<Competition> by lazy {
+            MutableLiveData<Competition>()
+        }
+        competitionsRef.document(id).addSnapshotListener{snapshot, e ->
+            if (snapshot != null && snapshot.exists()) {
+                competitionObserver.value = snapshot.toObject<Competition>()
+            } else {
+                competitionObserver.value = null
+            }
+        }
+        return competitionObserver
+    }
+
     fun addCompetition(competition: Competition) {
-        CompetitionsRef.document().set(competition).addOnSuccessListener {
+        competitionsRef.document().set(competition).addOnSuccessListener {
             refreshCompetitions()
         }
     }
 
     fun updateCompetition(competition: Competition) {
-        CompetitionsRef.document(competition.id).set(competition).addOnSuccessListener {
+        competitionsRef.document(competition.id).set(competition).addOnSuccessListener {
             refreshCompetitions()
         }
     }
 
     fun deleteCompetition(competition: Competition) {
-        CompetitionsRef.document(competition.id).delete().addOnSuccessListener {
+        competitionsRef.document(competition.id).delete().addOnSuccessListener {
             refreshCompetitions()
         }
     }
