@@ -4,4 +4,5 @@
     <string name="guess_word">Guess Word</string>
     <string name="wordToGuess">Placeholder</string>
     <string name="guess">Guess</string>
+    <string name="hangman">Hangman</string>
 </resources>
