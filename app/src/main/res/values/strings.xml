@@ -5,4 +5,7 @@
     <string name="wordToGuess">Placeholder</string>
     <string name="guess">Guess</string>
     <string name="hangman">Hangman</string>
+    <string name="singleplayer">Singleplayer</string>
+    <string name="multiplayer">Multiplayer</string>
+    <string name="profile">Profile</string>
 </resources>
