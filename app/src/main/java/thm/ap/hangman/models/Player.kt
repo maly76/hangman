@@ -9,17 +9,12 @@ data class Player (
 ): Serializable {
     var userName: String? = null
     var statistic: Statistic? = null
-    var status: Status? = null
-    var wordToGuess: String? = null
-    var tries: Int = 0
-    var hiddenWord: String? = null
 
     companion object {
-        fun new(id: String = "", username: String, statistic: Statistic, status: Status): Player {
+        fun new(id: String = "", username: String, statistic: Statistic): Player {
             val player = Player()
             player.userName = username
             player.statistic = statistic
-            player.status = status
             player.id = id
             return player
         }
@@ -28,11 +23,4 @@ data class Player (
             return Player()
         }
     }
-}
-
-enum class Status {
-    WON,
-    LOSED,
-    PLAYING,
-    OFFLINE
 }
