@@ -15,7 +15,6 @@ import thm.ap.hangman.models.Statistic
 import thm.ap.hangman.models.Status
 
 class Auth (val context: Context) {
-    private val playerDAO = PlayerDAO()
 
     fun authenticate (): Boolean {
         return Firebase.auth.currentUser != null
@@ -95,8 +94,8 @@ class Auth (val context: Context) {
     private fun createPlayer(userName: String) {
         val user = Firebase.auth.currentUser
         if (user != null) {
-            val player = Player.new(user.uid, userName, Statistic.empty(), Status.OFFLINE)
-            playerDAO.addPlayer(player)
+            val player = Player.new(user.uid, userName, Statistic(), Status.OFFLINE)
+            PlayerDAO.addPlayer(player)
         }
     }
 }

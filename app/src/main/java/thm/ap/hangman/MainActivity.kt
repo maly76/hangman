@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import thm.ap.hangman.models.Player
 import thm.ap.hangman.persistence.*
 
 class MainActivity : AppCompatActivity() {
@@ -20,8 +21,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         /** How to use the competition subscriber ... */
-        val cDAO = CompetitionDAO()
-        cDAO.subscribeCompetition("TIBkbrPTvR7Tyjm2RK5P").observe(this, { competition ->
+        val cDAO = CompetitionDAO(this)
+
+        cDAO.competitionsObserver.observe(this, { comps ->
+            Log.i("TEST", comps.toString())
+        })
+
+        cDAO.subscribeCompetition("vF0PoLLipjPmMRGRkTup").observe(this, { competition ->
             Log.e("Competition changed", competition.toString())
         })
 
