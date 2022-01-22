@@ -51,13 +51,6 @@ class PlayerDAO {
             }
         }
 
-        fun incrementTries(docId: String) {
-            val washingtonRef = playersRef.document(docId)
-
-            // Atomically increment the tries of the player by 1.
-            washingtonRef.update("tries", FieldValue.increment(1))
-        }
-
         fun updatePlayer(player: Player) {
             playersRef.document(player.id).set(player).addOnSuccessListener {
                 refreshPlayers()

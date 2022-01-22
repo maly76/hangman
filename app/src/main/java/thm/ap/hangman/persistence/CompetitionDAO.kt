@@ -6,10 +6,9 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import org.jetbrains.annotations.NotNull
 import thm.ap.hangman.models.Competition
+import thm.ap.hangman.models.MultiPlayerGame
 import thm.ap.hangman.models.Player
-import thm.ap.hangman.models.Status
 import java.io.Serializable
 
 class CompetitionDAO (private val owner: AppCompatActivity) {
@@ -20,12 +19,14 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
     ): Serializable {
         var playerA: DocumentReference? = null
         var playerB: DocumentReference? = null
+        var gameInfos: MultiPlayerGame? = null
 
         companion object {
-            fun new(roomCode: String, firstPlayer: DocumentReference?, secondPlayer: DocumentReference?): CompetitionSnapshot {
+            fun new(roomCode: String, firstPlayer: DocumentReference?, secondPlayer: DocumentReference?, gameInfos: MultiPlayerGame?): CompetitionSnapshot {
                 val compSnapshot = CompetitionSnapshot(roomCode)
                 compSnapshot.playerA = firstPlayer
                 compSnapshot.playerB = secondPlayer
+                compSnapshot.gameInfos = gameInfos
                 return compSnapshot
             }
         }
@@ -68,6 +69,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
         val observer = MutableLiveData<Competition>()
         val comp = Competition(roomCode = snapshot.id)
 
+        comp.gameInfos = snapshot.gameInfos
         snapshot.playerA?.get()?.addOnSuccessListener { firstOne ->
             comp.playerA = firstOne.toObject<Player>()
             snapshot.playerB?.get()?.addOnSuccessListener { secondOne ->
@@ -97,12 +99,16 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
     }
 
     fun addCompetition(competition: Competition) {
-        val playerARef =  playersRef.document(competition.playerA!!.id)
-        val playerBRef =  playersRef.document(competition.playerB!!.id)
+        competitionsRef.document(competition.roomCode).get().addOnCompleteListener{ task ->
+            if (task.isSuccessful && !task.result.exists()) {
+                val playerARef =  playersRef.document(competition.playerA!!.id)
+                val playerBRef =  playersRef.document(competition.playerB!!.id)
 
-        competitionsRef.document().set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef))
-            .addOnSuccessListener {
-            refreshCompetitions()
+                competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, MultiPlayerGame()))
+                    .addOnSuccessListener {
+                        refreshCompetitions()
+                    }
+            }
         }
     }
 
@@ -110,7 +116,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
         val playerARef = competitionsRef.document(competition.playerA!!.id)
         val playerBRef = competitionsRef.document(competition.playerB!!.id)
 
-        competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef))
+        competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, competition.gameInfos))
             .addOnSuccessListener {
             refreshCompetitions()
         }

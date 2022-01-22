@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import thm.ap.hangman.models.Competition
+import thm.ap.hangman.models.MultiPlayerGame
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.persistence.*
 
@@ -23,11 +25,15 @@ class MainActivity : AppCompatActivity() {
         /** How to use the competition subscriber ... */
         val cDAO = CompetitionDAO(this)
 
-        cDAO.competitionsObserver.observe(this, { comps ->
-            Log.i("TEST", comps.toString())
-        })
+        /*PlayerDAO.playersObserver.observe(this, { players ->
+            cDAO.addCompetition(Competition(roomCode = "roomB", playerA = players[0], playerB = players[1], gameInfos = MultiPlayerGame()))
+        })*/
 
-        cDAO.subscribeCompetition("vF0PoLLipjPmMRGRkTup").observe(this, { competition ->
+        /*cDAO.competitionsObserver.observe(this, { comps ->
+            Log.i("TEST", comps.toString())
+        }) */
+
+        cDAO.subscribeCompetition("roomA").observe(this, { competition ->
             Log.e("Competition changed", competition.toString())
         })
 
