@@ -13,27 +13,7 @@ import thm.ap.hangman.models.Result
 import java.io.Serializable
 
 class CompetitionDAO (private val owner: AppCompatActivity) {
-
-    data class CompetitionSnapshot(
-        @set:DocumentId
-        var id: String = ""
-    ): Serializable {
-        var playerA: DocumentReference? = null
-        var playerB: DocumentReference? = null
-        var gameInfos: MultiPlayerGame? = null
-
-        companion object {
-            fun new(roomCode: String, firstPlayer: DocumentReference?, secondPlayer: DocumentReference?, gameInfos: MultiPlayerGame?): CompetitionSnapshot {
-                val compSnapshot = CompetitionSnapshot(roomCode)
-                compSnapshot.playerA = firstPlayer
-                compSnapshot.playerB = secondPlayer
-                compSnapshot.gameInfos = gameInfos
-                return compSnapshot
-            }
-        }
-    }
-
-    private val competitionsRef: CollectionReference = Firebase.firestore.collection("competitions")
+    private val competitionsRef: CollectionReference = Firebase.firestore.collection(TAG)
     private lateinit var competitionRegistration: ListenerRegistration
 
     private val competitionObserver = MutableLiveData<Result<Competition>>()
@@ -41,7 +21,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
     private val competitionsObserver = MutableLiveData<Result<List<Competition>>>()
     private val playersRef: CollectionReference = Firebase.firestore.collection(PlayerDAO.TAG)
 
-    fun getCompetetionsObserver(): MutableLiveData<Result<List<Competition>>> {
+    fun getCompetitionsObserver(): MutableLiveData<Result<List<Competition>>> {
         refreshCompetitions()
         return competitionsObserver
     }
@@ -76,14 +56,17 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
 
     private fun parseCompetition(snapshot: CompetitionSnapshot): MutableLiveData<Competition> {
         val observer = MutableLiveData<Competition>()
-        val comp = Competition(roomCode = snapshot.id)
 
-        comp.gameInfos = snapshot.gameInfos
         snapshot.playerA?.get()?.addOnSuccessListener { firstOne ->
-            comp.playerA = firstOne.toObject<Player>()
-            snapshot.playerB?.get()?.addOnSuccessListener { secondOne ->
-                comp.playerB = secondOne.toObject<Player>()
-                observer.setValue(comp)
+            val comp = Competition(roomCode = snapshot.id, playerA = firstOne.toObject<Player>()!!)
+            comp.gameInfos = snapshot.gameInfos
+            if (snapshot.playerB != null) {
+                snapshot.playerB?.get()?.addOnSuccessListener { secondOne ->
+                    comp.playerB = secondOne.toObject<Player>()
+                    observer.value = comp
+                }
+            } else {
+                observer.value = comp
             }
         }
 
@@ -99,6 +82,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
             parseCompetition(data).observe(owner, { comp ->
                 compts.add(comp)
                 if (index == snapshots.size() - 1) {
+                    compts.removeIf { competition -> competition.roomCode == "baseline" }
                     observer.value = compts
                 }
             })
@@ -116,7 +100,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
                 if (task.result.exists()) {
                     observer.value = Result.failure("There is a competition with the same room code")
                 } else {
-                    val playerARef =  playersRef.document(competition.playerA!!.id)
+                    val playerARef =  playersRef.document(competition.playerA.id)
                     val playerBRef =  playersRef.document(competition.playerB!!.id)
 
                     competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, MultiPlayerGame()))
@@ -134,10 +118,10 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
     fun updateCompetition(competition: Competition): MutableLiveData<Result<Competition>> {
         val observer = MutableLiveData<Result<Competition>>()
 
-        val playerARef = competitionsRef.document(competition.playerA!!.id)
-        val playerBRef = competitionsRef.document(competition.playerB!!.id)
-
         observer.value = Result.inProgress()
+        val playerARef = playersRef.document(competition.playerA.id)
+        val playerBRef = if (competition.playerB != null) playersRef.document(competition.playerB!!.id) else null
+
         competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, competition.gameInfos))
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -154,6 +138,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
     fun deleteCompetition(competition: Competition): MutableLiveData<Result<Competition>> {
         val observer = MutableLiveData<Result<Competition>>()
 
+        observer.value = Result.inProgress()
         competitionsRef.document(competition.roomCode).delete()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -169,5 +154,28 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
 
     fun unsubscribeCompetition() {
         competitionRegistration.remove()
+    }
+
+    companion object {
+        const val TAG = "competitions"
+    }
+
+    data class CompetitionSnapshot(
+        @set:DocumentId
+        var id: String = ""
+    ): Serializable {
+        var playerA: DocumentReference? = null
+        var playerB: DocumentReference? = null
+        var gameInfos: MultiPlayerGame? = null
+
+        companion object {
+            fun new(roomCode: String, firstPlayer: DocumentReference?, secondPlayer: DocumentReference?, gameInfos: MultiPlayerGame?): CompetitionSnapshot {
+                val compSnapshot = CompetitionSnapshot(roomCode)
+                compSnapshot.playerA = firstPlayer
+                compSnapshot.playerB = secondPlayer
+                compSnapshot.gameInfos = gameInfos
+                return compSnapshot
+            }
+        }
     }
 }

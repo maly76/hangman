@@ -92,10 +92,11 @@ class Auth (val context: Context) {
     }
 
     private fun createPlayer(userName: String) {
+        val playerDAO = PlayerDAO()
         val user = Firebase.auth.currentUser
         if (user != null) {
             val player = Player.new(user.uid, userName, Statistic())
-            PlayerDAO.addPlayer(player)
+            playerDAO.addPlayer(player)
         }
     }
 }
