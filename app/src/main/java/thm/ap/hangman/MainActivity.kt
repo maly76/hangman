@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import thm.ap.hangman.models.Competition
-import thm.ap.hangman.models.MultiPlayerGame
-import thm.ap.hangman.models.Player
+import androidx.lifecycle.MutableLiveData
+import thm.ap.hangman.models.*
 import thm.ap.hangman.persistence.*
+import thm.ap.hangman.persistence.PlayerDAO.Companion.TAG
 
 class MainActivity : AppCompatActivity() {
     private val auth = Auth(this)
@@ -25,17 +25,37 @@ class MainActivity : AppCompatActivity() {
         /** How to use the competition subscriber ... */
         val cDAO = CompetitionDAO(this)
 
-        /*PlayerDAO.playersObserver.observe(this, { players ->
-            cDAO.addCompetition(Competition(roomCode = "roomB", playerA = players[0], playerB = players[1], gameInfos = MultiPlayerGame()))
+        PlayerDAO.playersObserver.observe(this, { players ->
+            cDAO.addCompetition(Competition(roomCode = "roomC", playerA = players[0], playerB = players[1], gameInfos = MultiPlayerGame())).observe(this, { result ->
+                when(result.status) {
+                    Result.Status.IN_PROGRESS -> Log.e("Result", "in progress")
+                    Result.Status.SUCCESS     -> Log.e("Result", "success " + result.data.toString())
+                    Result.Status.FAILURE     -> Log.e("Result", result.error!!)
+                }
+            })
+        })
+
+        /*cDAO.getCompetetionsObserver().observe(this, { result ->
+            when(result.status) {
+                Result.Status.IN_PROGRESS -> Log.e("Result", "in progress")
+                Result.Status.SUCCESS     -> Log.e("Result", "success " + result.data.toString())
+                Result.Status.FAILURE     -> Log.e("Result", result.error!!)
+            }
         })*/
 
-        /*cDAO.competitionsObserver.observe(this, { comps ->
-            Log.i("TEST", comps.toString())
-        }) */
+        /*cDAO.subscribeCompetition("roomC").observe(this, { result ->
+            when(result.status) {
+                Result.Status.IN_PROGRESS -> Log.e("Result", "in progress")
+                Result.Status.SUCCESS     -> Log.e("Result", "success " + result.data)
+                Result.Status.FAILURE     -> Log.e("Result", result.error!!)
+            }
+        })*/
 
-        cDAO.subscribeCompetition("roomA").observe(this, { competition ->
-            Log.e("Competition changed", competition.toString())
-        })
+        /*
+
+        */
+
+        // cDAO.unsubscribeCompetition()
 
         //playerDAO.addPlayer(Player.new(Firebase.auth.currentUser!!.uid, "Moh", Statistic.empty(), Status.OFFLINE))
 
