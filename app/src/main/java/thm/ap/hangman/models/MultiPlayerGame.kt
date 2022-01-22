@@ -1,8 +1,6 @@
 package thm.ap.hangman.models
 
-import org.jetbrains.annotations.NotNull
-
-data class MultiPlayerGame (@NotNull val roomCode: String) {
+class MultiPlayerGame {
     var WortToGuessA: String? = null
     var WortToGuessB: String? = null
     var TriesA: Int = 0
