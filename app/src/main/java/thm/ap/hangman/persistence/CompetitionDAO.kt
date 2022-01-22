@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Competition
 import thm.ap.hangman.models.MultiPlayerGame
 import thm.ap.hangman.models.Player
+import thm.ap.hangman.models.Result
 import java.io.Serializable
 
 class CompetitionDAO (private val owner: AppCompatActivity) {
@@ -33,33 +34,41 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
     }
 
     private val competitionsRef: CollectionReference = Firebase.firestore.collection("competitions")
-    private val competitionObserver: MutableLiveData<Competition> by lazy {
-        MutableLiveData<Competition>()
-    }
     private lateinit var competitionRegistration: ListenerRegistration
-    val competitionsObserver: MutableLiveData<List<Competition>> by lazy {
-        refreshCompetitions()
-        MutableLiveData<List<Competition>>()
-    }
+
+    private val competitionObserver = MutableLiveData<Result<Competition>>()
+
+    private val competitionsObserver = MutableLiveData<Result<List<Competition>>>()
     private val playersRef: CollectionReference = Firebase.firestore.collection(PlayerDAO.TAG)
 
+    fun getCompetetionsObserver(): MutableLiveData<Result<List<Competition>>> {
+        refreshCompetitions()
+        return competitionsObserver
+    }
+
     private fun refreshCompetitions() {
-        competitionsRef.get().addOnSuccessListener { snapshots ->
-            parseCompetitions(snapshots).observe(owner, { competitions ->
-                competitionsObserver.value = competitions
-            })
+        competitionsObserver.value = Result.inProgress()
+        competitionsRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                parseCompetitions(task.result).observe(owner, { competitions ->
+                    competitionsObserver.value = Result.success(competitions)
+                })
+            } else {
+                competitionObserver.value = Result.failure(task.exception!!.message!!)
+            }
         }
     }
 
-    fun subscribeCompetition(id: String): MutableLiveData<Competition> {
+    fun subscribeCompetition(id: String): MutableLiveData<Result<Competition>> {
+        competitionObserver.value = Result.inProgress()
         competitionRegistration = competitionsRef.document(id).addSnapshotListener{snapshot, e ->
             if (snapshot != null && snapshot.exists()) {
                 val data = snapshot.toObject<CompetitionSnapshot>()
                 parseCompetition(data!!).observe(owner, { comp ->
-                    competitionObserver.value = comp
+                    competitionObserver.value = Result.success(comp)
                 })
             } else {
-                competitionObserver.value = null
+                competitionObserver.value = Result.failure("competition does not exist")
             }
         }
         return competitionObserver
@@ -98,38 +107,67 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
         return observer
     }
 
-    fun addCompetition(competition: Competition) {
-        competitionsRef.document(competition.roomCode).get().addOnCompleteListener{ task ->
-            if (task.isSuccessful && !task.result.exists()) {
-                val playerARef =  playersRef.document(competition.playerA!!.id)
-                val playerBRef =  playersRef.document(competition.playerB!!.id)
+    fun addCompetition(competition: Competition): MutableLiveData<Result<Competition>> {
+        val observer = MutableLiveData<Result<Competition>>()
 
-                competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, MultiPlayerGame()))
-                    .addOnSuccessListener {
-                        refreshCompetitions()
-                    }
+        observer.value = Result.inProgress()
+        competitionsRef.document(competition.roomCode).get().addOnCompleteListener{ task ->
+            if (task.isSuccessful) {
+                if (task.result.exists()) {
+                    observer.value = Result.failure("There is a competition with the same room code")
+                } else {
+                    val playerARef =  playersRef.document(competition.playerA!!.id)
+                    val playerBRef =  playersRef.document(competition.playerB!!.id)
+
+                    competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, MultiPlayerGame()))
+                        .addOnSuccessListener {
+                            refreshCompetitions()
+                            observer.value = Result.success(competition)
+                        }
+                }
             }
         }
+
+        return observer
     }
 
-    fun updateCompetition(competition: Competition) {
+    fun updateCompetition(competition: Competition): MutableLiveData<Result<Competition>> {
+        val observer = MutableLiveData<Result<Competition>>()
+
         val playerARef = competitionsRef.document(competition.playerA!!.id)
         val playerBRef = competitionsRef.document(competition.playerB!!.id)
 
+        observer.value = Result.inProgress()
         competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, competition.gameInfos))
-            .addOnSuccessListener {
-            refreshCompetitions()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    refreshCompetitions()
+                    observer.value = Result.success(competition)
+                } else {
+                    observer.value = Result.failure(task.exception!!.message!!)
+                }
         }
+
+        return observer
     }
 
-    fun deleteCompetition(competition: Competition) {
+    fun deleteCompetition(competition: Competition): MutableLiveData<Result<Competition>> {
+        val observer = MutableLiveData<Result<Competition>>()
+
         competitionsRef.document(competition.roomCode).delete()
-            .addOnSuccessListener {
-            refreshCompetitions()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    refreshCompetitions()
+                    observer.value = Result.success(competition)
+                } else {
+                    observer.value = Result.failure(task.exception!!.message!!)
+                }
         }
+
+        return observer
     }
 
-    fun removeRegistrations() {
+    fun unsubscribeCompetition() {
         competitionRegistration.remove()
     }
 }
