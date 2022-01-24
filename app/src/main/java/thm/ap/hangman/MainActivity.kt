@@ -15,12 +15,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
-import thm.ap.hangman.models.Statistic
-import thm.ap.hangman.persistence.PlayerAuth
 import thm.ap.hangman.persistence.CategoryDAO
 import thm.ap.hangman.persistence.CompetitionDAO
+import thm.ap.hangman.persistence.PlayerAuth
 import thm.ap.hangman.persistence.PlayerDAO
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = javaClass.simpleName
     private lateinit var gso: GoogleSignInOptions
 
-    private val playerAuth = PlayerAuth()
+    private val playerAuth = PlayerAuth(this)
 
     private val playerDAO = PlayerDAO()
     private val categoryDAO = CategoryDAO()
@@ -38,9 +36,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Log.e(TAG, "ughhhh")
-
         auth = Firebase.auth
 
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
@@ -60,20 +55,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun loginFlow(currentUser: FirebaseUser?) {
         if (currentUser == null) {
-            Log.e(TAG, "signinsilently")
             signInSilently()
         } else {
             val user = auth.currentUser
             user?.let {
-
-                val playerName = user.displayName
-
-                // The user's Id, unique to the Firebase project.
-                // Do NOT use this value to authenticate with your backend server, if you
-                // have one; use FirebaseUser.getIdToken() instead.
-                val uid = user.uid
-                Log.e(TAG, "the dude is in and his uid is $playerName$uid")
-
                 playerAuth.createPlayer(user)
 
                 playerDAO.getPlayersObserver().observe(this, { result ->
@@ -102,16 +87,15 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
     private fun signInSilently() {
         val account = GoogleSignIn.getLastSignedInAccount(this)
         if (GoogleSignIn.hasPermissions(account, *gso.scopeArray)) {
-            Log.e(TAG, "already signed sign, doing fb")
             // Already signed in.
             // The signed in account is stored in the 'account' variable.
             val signedInAccount = account
             firebaseAuthWithPlayGames(signedInAccount!!)
         } else {
-            Log.e(TAG, "havent signed in before")
             // Haven't been signed-in before. Try the silent sign-in first.
             val signInClient = GoogleSignIn.getClient(this, gso)
             signInClient
@@ -120,12 +104,10 @@ class MainActivity : AppCompatActivity() {
                     this
                 ) { task ->
                     if (task.isSuccessful) {
-                        Log.e(TAG, "doing fb")
                         // The signed in account is stored in the task's result.
                         val signedInAccount = task.result
                         firebaseAuthWithPlayGames(signedInAccount!!)
                     } else {
-                        Log.e(TAG, "sign in interactively")
                         startSignInIntent()
                     }
                 }
@@ -157,7 +139,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun firebaseAuthWithPlayGames(acct: GoogleSignInAccount) {
-        Log.e(TAG, "firebaseAuthWithPlayGames:" + acct.id)
+        Log.d(TAG, "firebaseAuthWithPlayGames:" + acct.id)
 
         val auth = Firebase.auth
         val credential = PlayGamesAuthProvider.getCredential(acct.serverAuthCode!!)
