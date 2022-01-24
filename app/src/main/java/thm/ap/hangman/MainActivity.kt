@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -15,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import thm.ap.hangman.fragments.MainMenu
 import thm.ap.hangman.models.Result
 import thm.ap.hangman.persistence.CategoryDAO
 import thm.ap.hangman.persistence.CompetitionDAO
@@ -82,6 +85,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
 
+                supportFragmentManager.commit {
+                    replace<MainMenu>(R.id.fragmentContainerView)
+                    setReorderingAllowed(true)
+                }
 
             }
 
