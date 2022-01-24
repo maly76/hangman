@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
     private val RC_SIGN_IN = 123
-    private val TAG = javaClass.simpleName
+    private val TAG = "testing"
     private lateinit var gso: GoogleSignInOptions
 
     private val playerAuth = PlayerAuth(this)
@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             val user = auth.currentUser
             user?.let {
+                Log.e(TAG,user.uid + " " + user.displayName)
                 playerAuth.createPlayer(user)
 
                 playerDAO.getPlayersObserver().observe(this, { result ->
