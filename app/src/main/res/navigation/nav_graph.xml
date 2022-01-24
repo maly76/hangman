@@ -3,17 +3,8 @@
              xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/welcome">
+    app:startDestination="@id/mainMenu">
 
-    <fragment
-        android:id="@+id/welcome"
-        android:name="thm.ap.hangman.fragments.Welcome"
-        android:label="fragment_welcome"
-        tools:layout="@layout/fragment_welcome" >
-        <action
-            android:id="@+id/action_welcome_to_mainMenu"
-            app:destination="@id/mainMenu" />
-    </fragment>
     <fragment
         android:id="@+id/mainMenu"
         android:name="thm.ap.hangman.fragments.MainMenu"
