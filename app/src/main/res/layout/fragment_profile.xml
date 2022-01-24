@@ -9,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
 
         <TextView
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Player name"
             android:textAlignment="center"
-            android:textSize="26sp"/>
+            android:textSize="26sp" />
 
         <TextView
             android:id="@+id/sp"
@@ -28,7 +28,7 @@
             android:text="Singleplayer"
             android:textAlignment="center"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/played_sp"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:text="Games played: 21"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/won"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:text="Games Won: 10"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/lost"
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:text="Games Lost: 11"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/ratio"
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:text="Win ratio: 48%"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/mp"
@@ -69,7 +69,7 @@
             android:text="Multiplayer"
             android:textAlignment="center"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/played_mp"
@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:text="Games played: 9"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/won_mp"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:text="Games Won: 6"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/lost_mp"
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:text="Games Lost: 3"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/ratio_mp"
@@ -101,6 +101,6 @@
             android:layout_height="wrap_content"
             android:text="Win ratio: 66%"
             android:textAlignment="center"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </LinearLayout>
 </FrameLayout>
