@@ -8,7 +8,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
 
-class PlayerAuth(val context: Context) {
+class PlayerAuth(private val context: Context) {
 
 
     fun signout() {
