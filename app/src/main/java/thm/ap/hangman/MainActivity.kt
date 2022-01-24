@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import thm.ap.hangman.models.*
-import thm.ap.hangman.persistence.*
+import thm.ap.hangman.models.Result
+import thm.ap.hangman.persistence.Auth
+import thm.ap.hangman.persistence.CategoryDAO
+import thm.ap.hangman.persistence.CompetitionDAO
+import thm.ap.hangman.persistence.PlayerDAO
 import thm.ap.hangman.persistence.PlayerDAO.Companion.TAG
 
 class MainActivity : AppCompatActivity() {
@@ -26,22 +29,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         playerDAO.getPlayersObserver().observe(this, { result ->
-            when(result.status) {
+            when (result.status) {
                 Result.Status.IN_PROGRESS -> Log.i(TAG, "the request in progress")
-                Result.Status.SUCCESS     -> {
+                Result.Status.SUCCESS -> {
                     Log.i(TAG, result.data!!.toString())
                 }
-                Result.Status.FAILURE     -> Log.i(TAG, result.error!!)
+                Result.Status.FAILURE -> Log.i(TAG, result.error!!)
             }
         })
 
         competitionDAO.subscribeCompetition("234").observe(this, { result ->
-            when(result.status) {
+            when (result.status) {
                 Result.Status.IN_PROGRESS -> Log.i(TAG, "the request in progress")
-                Result.Status.SUCCESS     -> {
+                Result.Status.SUCCESS -> {
                     Log.i(TAG, result.data!!.toString())
                 }
-                Result.Status.FAILURE     -> Log.i(TAG, result.error!!)
+                Result.Status.FAILURE -> Log.i(TAG, result.error!!)
             }
         })
 

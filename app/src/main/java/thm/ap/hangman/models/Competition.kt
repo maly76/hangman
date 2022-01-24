@@ -7,5 +7,5 @@ data class Competition(
     var playerA: Player,
     var playerB: Player? = null,
     var gameInfos: MultiPlayerGame? = null
-): Serializable {
+) : Serializable {
 }

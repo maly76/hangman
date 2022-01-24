@@ -2,17 +2,17 @@ package thm.ap.hangman
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import thm.ap.hangman.databinding.PlayingFieldBinding
 import thm.ap.hangman.gamelogic.GameLogic
 
 class PlayingFieldActivity : AppCompatActivity() {
 
     private lateinit var binding: PlayingFieldBinding
-//    private val viewModel: PlayingFieldViewModel by viewModels()
+
+    //    private val viewModel: PlayingFieldViewModel by viewModels()
     private val gameLogic = GameLogic()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,9 @@ class PlayingFieldActivity : AppCompatActivity() {
     private fun onButtonPressed(button: Button) {
         button.isClickable = false
         if (gameLogic.checkLetter(button.text[0])) {
-            if (gameLogic.checkIfWon()) { gameWon() }
+            if (gameLogic.checkIfWon()) {
+                gameWon()
+            }
             button.setBackgroundColor(Color.parseColor("#4CAF50"))
             updateHiddenWord()
         } else {
@@ -85,7 +87,7 @@ class PlayingFieldActivity : AppCompatActivity() {
     }
 
     private fun bindButtons() {
-        binding.letterA.setOnClickListener { onButtonPressed(binding.letterA)}
+        binding.letterA.setOnClickListener { onButtonPressed(binding.letterA) }
         binding.letterB.setOnClickListener { onButtonPressed(binding.letterB) }
         binding.letterC.setOnClickListener { onButtonPressed(binding.letterC) }
         binding.letterD.setOnClickListener { onButtonPressed(binding.letterD) }
