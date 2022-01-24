@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -36,6 +38,28 @@ class MainMenu : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main_menu, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val navController = findNavController()
+
+        val buttonSinglePlayer: Button = view.findViewById(R.id.button_singleplayer)
+        buttonSinglePlayer.setOnClickListener {
+            val action = MainMenuDirections.actionMainMenuToSinglePlayer()
+            navController.navigate(action)
+        }
+        val buttonMultiPlayer: Button = view.findViewById(R.id.button_multiplayer)
+        buttonMultiPlayer.setOnClickListener {
+            val action = MainMenuDirections.actionMainMenuToMultiPlayer()
+            navController.navigate(action)
+        }
+        val buttonProfile: Button = view.findViewById(R.id.button_profile)
+        buttonProfile.setOnClickListener {
+            val action = MainMenuDirections.actionMainMenuToProfile()
+            navController.navigate(action)
+        }
     }
 
     companion object {
