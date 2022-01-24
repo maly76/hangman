@@ -24,19 +24,19 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/singleplayer_button"
+                android:id="@+id/button_singleplayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/singleplayer" />
 
             <Button
-                android:id="@+id/multiplayer_button"
+                android:id="@+id/button_multiplayer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/multiplayer" />
 
             <Button
-                android:id="@+id/profile_button"
+                android:id="@+id/button_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/profile" />
