@@ -69,7 +69,7 @@ class GameLogic {
         var index: Int = this.wordToGuess.indexOf(c)
         while (index >= 0) {
             // replace all matching indices with the correct char
-            val sb = StringBuilder(hiddenWord).also { it.setCharAt(index, c)}
+            val sb = StringBuilder(hiddenWord).also { it.setCharAt(index, c) }
             this.hiddenWord = sb.toString()
             index = this.wordToGuess.indexOf(c, index + 1)
         }
@@ -77,7 +77,7 @@ class GameLogic {
 
     fun checkLetter(c: Char): Boolean {
         val char = c.uppercaseChar()
-        val letter = this.letters.find { it.letter == char} ?: return false
+        val letter = this.letters.find { it.letter == char } ?: return false
         return if (wordToGuess.contains(letter.letter, true)) {
             letter.setStatus(true)
             updateHiddenWord(c.lowercaseChar())

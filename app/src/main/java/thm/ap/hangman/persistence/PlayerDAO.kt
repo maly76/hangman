@@ -2,7 +2,6 @@ package thm.ap.hangman.persistence
 
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase

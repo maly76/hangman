@@ -3,10 +3,10 @@ package thm.ap.hangman.models
 import com.google.firebase.firestore.DocumentId
 import java.io.Serializable
 
-data class Statistic (
+data class Statistic(
     @set:DocumentId
     var id: String = ""
-): Serializable {
+) : Serializable {
     var wins: Int = 0
     var losses: Int = 0
     var winLosRate: Double = 0.0
