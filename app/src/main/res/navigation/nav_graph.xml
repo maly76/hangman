@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcome">
+
+    <fragment
+        android:id="@+id/welcome"
+        android:name="thm.ap.hangman.fragments.Welcome"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome" >
+        <action
+            android:id="@+id/action_welcome_to_mainMenu"
+            app:destination="@id/mainMenu" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainMenu"
+        android:name="thm.ap.hangman.fragments.MainMenu"
+        android:label="fragment_main_menu"
+        tools:layout="@layout/fragment_main_menu" >
+        <action
+            android:id="@+id/action_mainMenu_to_singlePlayer"
+            app:destination="@id/singlePlayer" />
+        <action
+            android:id="@+id/action_mainMenu_to_multiPlayer"
+            app:destination="@id/multiPlayer" />
+        <action
+            android:id="@+id/action_mainMenu_to_profile"
+            app:destination="@id/profile" />
+    </fragment>
+    <fragment
+        android:id="@+id/singlePlayer"
+        android:name="thm.ap.hangman.fragments.SinglePlayer"
+        android:label="fragment_single_player"
+        tools:layout="@layout/fragment_single_player" />
+    <fragment
+        android:id="@+id/multiPlayer"
+        android:name="thm.ap.hangman.fragments.MultiPlayer"
+        android:label="fragment_multi_player"
+        tools:layout="@layout/fragment_multi_player" />
+    <fragment
+        android:id="@+id/profile"
+        android:name="thm.ap.hangman.fragments.Profile"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+</navigation>
