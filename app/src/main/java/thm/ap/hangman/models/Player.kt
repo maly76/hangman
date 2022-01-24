@@ -11,7 +11,7 @@ data class Player(
     var statistic: Statistic? = null
 
     companion object {
-        fun new(id: String = "", username: String?, statistic: Statistic): Player {
+        fun new(id: String, username: String?, statistic: Statistic): Player {
             val player = Player()
             player.userName = username
             player.statistic = statistic
