@@ -12,11 +12,10 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.R
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
-import thm.ap.hangman.models.Status
 
-class Auth (val context: Context) {
+class Auth(val context: Context) {
 
-    fun authenticate (): Boolean {
+    fun authenticate(): Boolean {
         return Firebase.auth.currentUser != null
     }
 
@@ -25,7 +24,7 @@ class Auth (val context: Context) {
             if (task.isSuccessful) {
                 Log.i(TAG, task.result?.user?.uid ?: "No User id")
             }
-            task.exception?.message?.let {Log.e("UID", it)}
+            task.exception?.message?.let { Log.e("UID", it) }
         }
     }
 
@@ -37,13 +36,17 @@ class Auth (val context: Context) {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.i(TAG, getString(R.string.auth_success))
-                    Toast.makeText(context, R.string.auth_success,
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context, R.string.auth_success,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.e(TAG, getString(R.string.auth_fail))
-                    Toast.makeText(context, R.string.auth_fail,
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context, R.string.auth_fail,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }
@@ -66,13 +69,13 @@ class Auth (val context: Context) {
                 if (it.isSuccessful) {
                     Log.i("UID", it.result?.user?.uid ?: "No User id")
                 }
-                it.exception?.message?.let {Log.e("UID", it)}
+                it.exception?.message?.let { Log.e("UID", it) }
             }
         }
     }
 
     fun signUp() {
-        Firebase.auth.signInAnonymously().addOnCompleteListener {task ->
+        Firebase.auth.signInAnonymously().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 createPlayer("Anonymous")
             } else {
@@ -83,8 +86,10 @@ class Auth (val context: Context) {
     }
 
     fun show(resId: Int) {
-        Toast.makeText(context, resId,
-            Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context, resId,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun getString(resId: Int): String {

@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".PlayingFieldActivity">
 
 
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/wordToGuess"
-        android:textSize="40sp"/>
+        android:textSize="40sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,21 +31,21 @@
         <EditText
             android:id="@+id/guessWord"
             android:layout_width="0dp"
-            android:layout_weight="2"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_weight="2"
+            android:ems="10"
+            android:inputType="textPersonName"
             android:text="" />
 
         <Button
             android:id="@+id/guessButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_weight="1"
             android:text="@string/guess" />
     </LinearLayout>
 
@@ -53,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="30dp">
+
         <TableRow>
 
             <Button
@@ -69,288 +70,290 @@
             <Button
                 android:id="@+id/letterB"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="B"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterC"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:padding="0dp"
                 android:text="C"
-                tools:ignore="TouchTargetSizeCheck"
-                android:clickable="false"/>
+                tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterD"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="D"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterE"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="E"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterF"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="F"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterG"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="G"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterH"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="H"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterI"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="I"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterJ"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="J"
                 tools:ignore="TouchTargetSizeCheck" />
         </TableRow>
 
         <TableRow>
+
             <Button
                 android:id="@+id/letterK"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginRight="8dp"
-                android:layout_marginLeft="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="K"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterL"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="L"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterM"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="M"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterN"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="N"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterO"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="O"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterP"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:padding="0dp"
                 android:text="P"
-                tools:ignore="TouchTargetSizeCheck"
-                android:clickable="false"/>
+                tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterQ"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="Q"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterR"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="R"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterS"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="S"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterT"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="T"
                 tools:ignore="TouchTargetSizeCheck" />
         </TableRow>
 
         <TableRow>
+
             <Button
                 android:id="@+id/letterU"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginRight="8dp"
-                android:layout_marginLeft="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="U"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterV"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="V"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterW"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="W"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterX"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="X"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterY"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="Y"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterZ"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="Z"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterAE"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="Ä"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterUE"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="Ü"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/letterOE"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:padding="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:padding="0dp"
                 android:text="Ö"
                 tools:ignore="TouchTargetSizeCheck" />
         </TableRow>

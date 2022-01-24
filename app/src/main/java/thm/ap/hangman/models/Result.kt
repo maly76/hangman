@@ -5,7 +5,7 @@ class Result<T>(val status: Status, val data: T? = null, val error: String? = nu
         SUCCESS, IN_PROGRESS, FAILURE
     }
 
-    companion object{
+    companion object {
         fun <T> success(data: T?) = Result(Status.SUCCESS, data)
         fun <T> failure(error: String) = Result<T>(Status.FAILURE, error = error)
         fun <T> inProgress() = Result<T>(Status.IN_PROGRESS)

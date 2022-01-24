@@ -12,7 +12,7 @@ import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
 import java.io.Serializable
 
-class CompetitionDAO (private val owner: AppCompatActivity) {
+class CompetitionDAO(private val owner: AppCompatActivity) {
     private val competitionsRef: CollectionReference = Firebase.firestore.collection(TAG)
     private lateinit var competitionRegistration: ListenerRegistration
 
@@ -41,7 +41,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
 
     fun subscribeCompetition(id: String): MutableLiveData<Result<Competition>> {
         competitionObserver.value = Result.inProgress()
-        competitionRegistration = competitionsRef.document(id).addSnapshotListener{snapshot, e ->
+        competitionRegistration = competitionsRef.document(id).addSnapshotListener { snapshot, e ->
             if (snapshot != null && snapshot.exists()) {
                 val data = snapshot.toObject<CompetitionSnapshot>()
                 parseCompetition(data!!).observe(owner, { comp ->
@@ -73,7 +73,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
         return observer
     }
 
-    private fun parseCompetitions (snapshots: QuerySnapshot): MutableLiveData<List<Competition>> {
+    private fun parseCompetitions(snapshots: QuerySnapshot): MutableLiveData<List<Competition>> {
         val observer = MutableLiveData<List<Competition>>()
 
         val compts = mutableListOf<Competition>()
@@ -95,15 +95,23 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
         val observer = MutableLiveData<Result<Competition>>()
 
         observer.value = Result.inProgress()
-        competitionsRef.document(competition.roomCode).get().addOnCompleteListener{ task ->
+        competitionsRef.document(competition.roomCode).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 if (task.result.exists()) {
-                    observer.value = Result.failure("There is a competition with the same room code")
+                    observer.value =
+                        Result.failure("There is a competition with the same room code")
                 } else {
-                    val playerARef =  playersRef.document(competition.playerA.id)
-                    val playerBRef =  playersRef.document(competition.playerB!!.id)
+                    val playerARef = playersRef.document(competition.playerA.id)
+                    val playerBRef = playersRef.document(competition.playerB!!.id)
 
-                    competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, MultiPlayerGame()))
+                    competitionsRef.document(competition.roomCode).set(
+                        CompetitionSnapshot.new(
+                            competition.roomCode,
+                            playerARef,
+                            playerBRef,
+                            MultiPlayerGame()
+                        )
+                    )
                         .addOnSuccessListener {
                             refreshCompetitions()
                             observer.value = Result.success(competition)
@@ -120,9 +128,17 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
 
         observer.value = Result.inProgress()
         val playerARef = playersRef.document(competition.playerA.id)
-        val playerBRef = if (competition.playerB != null) playersRef.document(competition.playerB!!.id) else null
+        val playerBRef =
+            if (competition.playerB != null) playersRef.document(competition.playerB!!.id) else null
 
-        competitionsRef.document(competition.roomCode).set(CompetitionSnapshot.new(competition.roomCode, playerARef, playerBRef, competition.gameInfos))
+        competitionsRef.document(competition.roomCode).set(
+            CompetitionSnapshot.new(
+                competition.roomCode,
+                playerARef,
+                playerBRef,
+                competition.gameInfos
+            )
+        )
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     refreshCompetitions()
@@ -130,7 +146,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
                 } else {
                     observer.value = Result.failure(task.exception!!.message!!)
                 }
-        }
+            }
 
         return observer
     }
@@ -147,7 +163,7 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
                 } else {
                     observer.value = Result.failure(task.exception!!.message!!)
                 }
-        }
+            }
 
         return observer
     }
@@ -163,13 +179,18 @@ class CompetitionDAO (private val owner: AppCompatActivity) {
     data class CompetitionSnapshot(
         @set:DocumentId
         var id: String = ""
-    ): Serializable {
+    ) : Serializable {
         var playerA: DocumentReference? = null
         var playerB: DocumentReference? = null
         var gameInfos: MultiPlayerGame? = null
 
         companion object {
-            fun new(roomCode: String, firstPlayer: DocumentReference?, secondPlayer: DocumentReference?, gameInfos: MultiPlayerGame?): CompetitionSnapshot {
+            fun new(
+                roomCode: String,
+                firstPlayer: DocumentReference?,
+                secondPlayer: DocumentReference?,
+                gameInfos: MultiPlayerGame?
+            ): CompetitionSnapshot {
                 val compSnapshot = CompetitionSnapshot(roomCode)
                 compSnapshot.playerA = firstPlayer
                 compSnapshot.playerB = secondPlayer

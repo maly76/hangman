@@ -1,4 +1,3 @@
-
 package thm.ap.hangman.persistence
 
 import androidx.lifecycle.MutableLiveData
