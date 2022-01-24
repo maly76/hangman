@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
-import androidx.navigation.fragment.NavHostFragment
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -18,9 +16,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import thm.ap.hangman.fragments.MainMenu
-import thm.ap.hangman.fragments.Welcome
-import thm.ap.hangman.fragments.WelcomeDirections
 import thm.ap.hangman.models.Result
 import thm.ap.hangman.persistence.CategoryDAO
 import thm.ap.hangman.persistence.CompetitionDAO
@@ -41,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private val competitionDAO = CompetitionDAO(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
 
@@ -87,13 +83,6 @@ class MainActivity : AppCompatActivity() {
                         Result.Status.FAILURE -> Log.i(TAG, result.error!!)
                     }
                 })
-
-                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-                val navController = navHostFragment.navController
-
-                val action = WelcomeDirections.actionWelcomeToMainMenu()
-
-                navController.navigate(action)
 
             }
 
