@@ -1,5 +1,6 @@
 package thm.ap.hangman.persistence
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
