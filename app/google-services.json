@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "53668583104-0daqta6p8ebhnm448aork8mc2ecpci06.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "thm.ap.hangman",
+            "certificate_hash": "e8f67985c8c860c80ee85e793a40658e5396dfa2"
+          }
+        },
+        {
+          "client_id": "53668583104-2svm1co3pq6993e0bsungvrm3g9c6jva.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "thm.ap.hangman",
+            "certificate_hash": "f0eccdea5f1018360c4eee3be22c1aa401954997"
+          }
+        },
+        {
           "client_id": "53668583104-q726jh0rkofvvlg86c8qs49k3h6nahq2.apps.googleusercontent.com",
           "client_type": 3
         }
