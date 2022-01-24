@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             val user = auth.currentUser
             user?.let {
-                Log.e(TAG,user.uid + " " + user.displayName)
+                Log.e(TAG, user.uid + " " + user.displayName)
                 playerAuth.createPlayer(user)
 
                 playerDAO.getPlayersObserver().observe(this, { result ->
