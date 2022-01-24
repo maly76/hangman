@@ -8,4 +8,8 @@
     <string name="singleplayer">Singleplayer</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="profile">Profile</string>
+    <string name="auth_success">Authentication successfully</string>
+    <string name="auth_fail">Authentication successfully</string>
+    <string name="signin_fail">sign in successfully</string>
+    <string name="signup_fail">sign up successfully</string>
 </resources>
