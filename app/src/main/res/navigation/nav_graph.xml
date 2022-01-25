@@ -65,7 +65,7 @@
         android:id="@+id/result"
         android:name="thm.ap.hangman.fragments.Result"
         android:label="fragment_result"
-        tools:layout="@layout/fragment_result" >
+        tools:layout="@layout/fragment_result">
         <action
             android:id="@+id/action_result_to_chooseWord"
             app:destination="@id/chooseWord" />
