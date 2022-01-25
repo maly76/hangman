@@ -81,12 +81,12 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
     private fun parseCompetition(snapshot: CompetitionSnapshot): MutableLiveData<Competition> {
         val observer = MutableLiveData<Competition>()
 
-        snapshot.playerA?.get()?.addOnSuccessListener { firstOne ->
-            val comp = Competition(roomCode = snapshot.id, playerA = firstOne.toObject<Player>()!!)
+        snapshot.hostRef?.get()?.addOnSuccessListener { firstOne ->
+            val comp = Competition(roomCode = snapshot.id, host = firstOne.toObject<Player>()!!)
             comp.gameInfos = snapshot.gameInfos
-            if (snapshot.playerB != null) {
-                snapshot.playerB?.get()?.addOnSuccessListener { secondOne ->
-                    comp.playerB = secondOne.toObject<Player>()
+            if (snapshot.guestRef != null) {
+                snapshot.guestRef?.get()?.addOnSuccessListener { secondOne ->
+                    comp.guest = secondOne.toObject<Player>()
                     observer.value = comp
                 }
             } else {
@@ -121,6 +121,32 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
     }
 
     /**
+     * get competition by id to the database
+     * @param id is the specified competition id
+     * @return an observer which will receive a notification:
+     * 1- a Result with the competition if the request is successfully and the competition exists
+     * 2- a Result with an error it is failed or the competition does not exist
+     * */
+    fun getCompetitionByID(id: String): MutableLiveData<Result<Competition>> {
+        val observer = MutableLiveData<Result<Competition>>()
+
+        observer.value = Result.inProgress()
+        competitionsRef.document(id).get()
+            .addOnCompleteListener() { task ->
+                if (task.isSuccessful && task.result.exists()) {
+                    val data = task.result.toObject<CompetitionSnapshot>()
+                    parseCompetition(data!!).observe(owner, { comp ->
+                        observer.value = Result.success(comp)
+                    })
+                } else {
+                    observer.value = Result.failure("competition does not exist")
+                }
+            }
+
+        return observer
+    }
+
+    /**
      * add competition to the database
      * @param competition is the specified competition which will be added to the database
      * @return an observer which will receive a notification:
@@ -137,14 +163,14 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
                     observer.value =
                         Result.failure("There is a competition with the same room code")
                 } else {
-                    val playerARef = playersRef.document(competition.playerA.id)
-                    val playerBRef = playersRef.document(competition.playerB!!.id)
+                    val hostRef = playersRef.document(competition.host.id)
+                    val guestRef = if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
 
                     competitionsRef.document(competition.roomCode).set(
                         CompetitionSnapshot.new(
                             competition.roomCode,
-                            playerARef,
-                            playerBRef,
+                            hostRef,
+                            guestRef,
                             MultiPlayerGame()
                         )
                     )
@@ -170,15 +196,14 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
         val observer = MutableLiveData<Result<Competition>>()
 
         observer.value = Result.inProgress()
-        val playerARef = playersRef.document(competition.playerA.id)
-        val playerBRef =
-            if (competition.playerB != null) playersRef.document(competition.playerB!!.id) else null
+        val hostRef = playersRef.document(competition.host.id)
+        val guestRef = if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
 
         competitionsRef.document(competition.roomCode).set(
             CompetitionSnapshot.new(
                 competition.roomCode,
-                playerARef,
-                playerBRef,
+                hostRef,
+                guestRef,
                 competition.gameInfos
             )
         )
@@ -201,15 +226,15 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
      * 1- a Result with the competition if it is successfully deleted
      * 2- a Result with an error it is failed
      * */
-    fun deleteCompetition(competition: Competition): MutableLiveData<Result<Competition>> {
-        val observer = MutableLiveData<Result<Competition>>()
+    fun deleteCompetition(roomCode: String): MutableLiveData<Result<String>> {
+        val observer = MutableLiveData<Result<String>>()
 
         observer.value = Result.inProgress()
-        competitionsRef.document(competition.roomCode).delete()
+        competitionsRef.document(roomCode).delete()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     refreshCompetitions()
-                    observer.value = Result.success(competition)
+                    observer.value = Result.success(roomCode)
                 } else {
                     observer.value = Result.failure(task.exception!!.message!!)
                 }
@@ -238,8 +263,8 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
         @set:DocumentId
         var id: String = ""
     ) : Serializable {
-        var playerA: DocumentReference? = null
-        var playerB: DocumentReference? = null
+        var hostRef: DocumentReference? = null
+        var guestRef: DocumentReference? = null
         var gameInfos: MultiPlayerGame? = null
 
         companion object {
@@ -252,13 +277,13 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
              * */
             fun new(
                 roomCode: String,
-                firstPlayer: DocumentReference?,
-                secondPlayer: DocumentReference?,
+                hostRef: DocumentReference?,
+                guestRef: DocumentReference?,
                 gameInfos: MultiPlayerGame?
             ): CompetitionSnapshot {
                 val compSnapshot = CompetitionSnapshot(roomCode)
-                compSnapshot.playerA = firstPlayer
-                compSnapshot.playerB = secondPlayer
+                compSnapshot.hostRef = hostRef
+                compSnapshot.guestRef = guestRef
                 compSnapshot.gameInfos = gameInfos
                 return compSnapshot
             }
