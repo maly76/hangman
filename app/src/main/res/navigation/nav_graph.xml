@@ -29,10 +29,19 @@
         android:id="@+id/multiPlayer"
         android:name="thm.ap.hangman.fragments.MultiPlayer"
         android:label="fragment_multi_player"
-        tools:layout="@layout/fragment_multi_player" />
+        tools:layout="@layout/fragment_multi_player" >
+        <action
+            android:id="@+id/action_multiPlayer_to_chooseWord"
+            app:destination="@id/chooseWord" />
+    </fragment>
     <fragment
         android:id="@+id/profile"
         android:name="thm.ap.hangman.fragments.Profile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/chooseWord"
+        android:name="thm.ap.hangman.fragments.ChooseWord"
+        android:label="fragment_choose_word"
+        tools:layout="@layout/fragment_choose_word" />
 </navigation>
