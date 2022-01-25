@@ -72,6 +72,9 @@
         <action
             android:id="@+id/action_result_to_mainMenu"
             app:destination="@id/mainMenu" />
+        <argument
+            android:name="GameResult"
+            app:argType="thm.ap.hangman.fragments.PlayingField$GameResult" />
     </fragment>
     <fragment
         android:id="@+id/categories"
