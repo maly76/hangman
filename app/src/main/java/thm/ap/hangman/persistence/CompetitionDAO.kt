@@ -73,6 +73,8 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
         return observer
     }
 
+
+
     private fun parseCompetitions(snapshots: QuerySnapshot): MutableLiveData<List<Competition>> {
         val observer = MutableLiveData<List<Competition>>()
 
@@ -87,6 +89,25 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
                 }
             })
         }
+
+        return observer
+    }
+
+    fun getCompetitionByID(id: String): MutableLiveData<Result<Competition>> {
+        val observer = MutableLiveData<Result<Competition>>()
+
+        observer.value = Result.inProgress()
+        competitionsRef.document(id).get()
+            .addOnCompleteListener() { task ->
+                if (task.isSuccessful && task.result.exists()) {
+                    val data = task.result.toObject<CompetitionSnapshot>()
+                    parseCompetition(data!!).observe(owner, { comp ->
+                        observer.value = Result.success(comp)
+                    })
+                } else {
+                    observer.value = Result.failure("competition does not exist")
+                }
+            }
 
         return observer
     }
