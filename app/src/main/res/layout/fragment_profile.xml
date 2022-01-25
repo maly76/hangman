@@ -31,7 +31,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/played_sp"
+            android:id="@+id/played"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Games played: 21"
