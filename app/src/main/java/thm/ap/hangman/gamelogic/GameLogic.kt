@@ -7,7 +7,7 @@ class GameLogic {
     private var wordToGuess = "Zucchini"
     private lateinit var hiddenWord: String
     private var tries = 0
-    private val amountTries = 10
+    private val amountTries = 11
 
     init {
         generateHiddenWord()
