@@ -24,6 +24,6 @@ class MultiPlayerGame {
         var wortToGuess: String? = null
         var tries: Int = 0
         var hiddenWord: String? = null
-        var status: Status = Status.OFFLINE
+        var status: Player.Status = Player.Status.OFFLINE
     }
 }
