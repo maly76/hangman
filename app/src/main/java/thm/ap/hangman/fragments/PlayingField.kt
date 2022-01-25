@@ -72,6 +72,9 @@ class PlayingField : Fragment() {
         } else {
             button.setBackgroundColor(Color.parseColor("#F44336"))
             updateTries()
+            if(gameLogic.getTries() >= gameLogic.getAmountTries()){
+                gameLost()
+            }
         }
     }
 
