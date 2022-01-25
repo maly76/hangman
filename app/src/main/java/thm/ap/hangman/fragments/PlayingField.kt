@@ -3,14 +3,13 @@ package thm.ap.hangman.fragments
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.R
-import thm.ap.hangman.databinding.FragmentMainMenuBinding
 import thm.ap.hangman.databinding.FragmentPlayingFieldBinding
 import thm.ap.hangman.gamelogic.GameLogic
 
@@ -155,8 +154,6 @@ class PlayingField : Fragment() {
         binding.letterUE.setOnClickListener { onButtonPressed(binding.letterUE) }
         binding.letterOE.setOnClickListener { onButtonPressed(binding.letterOE) }
     }
-
-
 
 
     companion object {

@@ -164,7 +164,8 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
                         Result.failure("There is a competition with the same room code")
                 } else {
                     val hostRef = playersRef.document(competition.host.id)
-                    val guestRef = if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
+                    val guestRef =
+                        if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
 
                     competitionsRef.document(competition.roomCode).set(
                         CompetitionSnapshot.new(
@@ -197,7 +198,8 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
 
         observer.value = Result.inProgress()
         val hostRef = playersRef.document(competition.host.id)
-        val guestRef = if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
+        val guestRef =
+            if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
 
         competitionsRef.document(competition.roomCode).set(
             CompetitionSnapshot.new(
