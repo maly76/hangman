@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.R
+import thm.ap.hangman.databinding.FragmentMainMenuBinding
+import thm.ap.hangman.databinding.FragmentResultBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +25,9 @@ class Result : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var _binding: FragmentResultBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -31,11 +37,29 @@ class Result : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_result, container, false)
+        _binding = FragmentResultBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val navController = findNavController()
+
+        binding.buttonMainMenu.setOnClickListener {
+            val action = ResultDirections.actionResultToMainMenu()
+            navController.navigate(action)
+        }
+
+        binding.buttonPlayAgain.setOnClickListener {
+            val action = ResultDirections.actionResultToChooseWord()
+            navController.navigate(action)
+        }
     }
 
     companion object {

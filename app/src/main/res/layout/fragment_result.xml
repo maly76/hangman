@@ -61,7 +61,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/playAgain"
+                android:id="@+id/button_play_again"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -70,7 +70,7 @@
                 android:text="Play again" />
 
             <Button
-                android:id="@+id/mainMenu"
+                android:id="@+id/button_main_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
