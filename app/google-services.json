@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "53668583104-3shkqbmnrhit8jqe2uu06bfgo5mbfb78.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "thm.ap.hangman",
+            "certificate_hash": "5e52938d08cd12de876aa35439395d2571b6b827"
+          }
+        },
+        {
           "client_id": "53668583104-q726jh0rkofvvlg86c8qs49k3h6nahq2.apps.googleusercontent.com",
           "client_type": 3
         }
