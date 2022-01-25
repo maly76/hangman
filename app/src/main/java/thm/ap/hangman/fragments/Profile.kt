@@ -39,20 +39,24 @@ class Profile : Fragment() {
             if (it.data != null) {
                 binding.name.text = it.data.userName
 
-                val spStats: Stats = it.data.statistic.spStats
+                val spStats: Statistic.Stats? = it.data.statistic?.spStats
                 if (spStats != null) {
-                    binding.played.text = "Games played: ${spStats.getNumberOfPlayedGames()}"
-                    binding.won.text = "Games Won: ${spStats.wins}"
-                    binding.lost.text = "Games Lost: ${spStats.losses}"
-                    binding.ratio.text = "Win ratio: ${spStats.getWinLosRate()}%"
+                    binding.played.text = "Games played: ${spStats.getGeneralRate().getNumebrOfPlayedGames()}"
+                    binding.won.text = "Games Won: ${spStats.getGeneralRate().wins}"
+                    binding.lost.text = "Games Lost: ${spStats.getGeneralRate().losses}"
+                    binding.ratio.text = "Win ratio: ${spStats.getGeneralRate().getWinLosRate()}%"
+                    binding.longest.text = "Longest word: ${spStats.longestWord}"
+                    binding.streak.text = "Longest winstreak: ${spStats.winstreak}"
                 }
 
-                val mpStats: Stats = it.data.statistic.mpStats
+                val mpStats: Statistic.Stats? = it.data.statistic?.mpStats
                 if (mpStats != null) {
-                    binding.playedMp.text = "Games played: ${mpStats.getNumberOfPlayedGames()}"
-                    binding.wonMp.text = "Games Won: ${mpStats.wins}"
-                    binding.lostMp.text = "Games Lost: ${mpStats.losses}"
-                    binding.ratioMp.text = "Win ratio: ${mpStats.getWinLosRate()}%"
+                    binding.playedMp.text = "Games played: ${mpStats.getGeneralRate().getNumebrOfPlayedGames()}"
+                    binding.wonMp.text = "Games Won: ${mpStats.getGeneralRate().wins}"
+                    binding.lostMp.text = "Games Lost: ${mpStats.getGeneralRate().losses}"
+                    binding.ratioMp.text = "Win ratio: ${mpStats.getGeneralRate().getWinLosRate()}%"
+                    binding.longestMp.text = "Longest word: ${mpStats.longestWord}"
+                    binding.streakMp.text = "Longest winstreak: ${mpStats.winstreak}"
                 }
             }
         })
