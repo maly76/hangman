@@ -52,19 +52,21 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
+
         loginFlow(currentUser)
     }
 
     private fun loginFlow(currentUser: FirebaseUser?) {
         if (currentUser == null) {
-            signInSilently()
+            // TODO check if the user wants to sign in with google plays or anonymously
+            signInSilently()    // if the user wants to sign in with google plays
         } else {
             val user = auth.currentUser
             user?.let {
                 Log.e(TAG, user.uid + " " + user.displayName)
                 playerAuth.createPlayer(user)
 
-                playerDAO.getPlayersObserver().observe(this, { result ->
+                /*playerDAO.getPlayersObserver().observe(this, { result ->
                     when (result.status) {
                         Result.Status.IN_PROGRESS -> Log.i(TAG, "the request in progress")
                         Result.Status.SUCCESS -> {
@@ -82,12 +84,11 @@ class MainActivity : AppCompatActivity() {
                         }
                         Result.Status.FAILURE -> Log.i(TAG, result.error!!)
                     }
-                })
+                })*/
 
             }
 
         }
-
     }
 
     private fun signInSilently() {
