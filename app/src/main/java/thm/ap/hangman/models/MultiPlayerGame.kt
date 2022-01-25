@@ -1,12 +1,19 @@
 package thm.ap.hangman.models
 
+
 class MultiPlayerGame {
-    var WortToGuessA: String? = null
-    var WortToGuessB: String? = null
-    var TriesA: Int = 0
-    var TriesB: Int = 0
-    var HiddenWordA: String? = null
-    var HiddenWordB: String? = null
-    var StatusA: Status = Status.OFFLINE
-    var StatusB: Status = Status.OFFLINE
+    val host: PlayerInfos
+    val guest: PlayerInfos
+
+    init {
+        host = PlayerInfos()
+        guest = PlayerInfos()
+    }
+
+    class PlayerInfos {
+        var wortToGuess: String? = null
+        var tries: Int = 0
+        var hiddenWord: String? = null
+        var status: Status = Status.OFFLINE
+    }
 }
