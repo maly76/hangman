@@ -8,15 +8,27 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Category
 import thm.ap.hangman.models.Result
 
+/**
+ * The category service for managing the Categories in the database
+ * */
 class CategoryDAO {
     private val categoriesRef: CollectionReference = Firebase.firestore.collection(TAG)
     private val categoriesObserver = MutableLiveData<Result<List<Category>>>()
 
+    /**
+     * It can be observed to always receive a notification if the categories are locally changed
+     * @return the categoriesObserver
+     * */
     fun getCategoriesObserver(): MutableLiveData<Result<List<Category>>> {
         refreshCategories()
         return categoriesObserver
     }
 
+    /**
+     * It will be called after changes on Categories
+     * set the value of categoriesObserver a Result in progress to notify the observer
+     * set the value on Result with success if the request was successfully or on Result with failure if the request is failed
+     * */
     private fun refreshCategories() {
         categoriesObserver.value = Result.inProgress()
         categoriesRef.get()
@@ -35,6 +47,13 @@ class CategoryDAO {
             }
     }
 
+    /**
+     * add category to the database
+     * @param category is the specified category which will be added to the database
+     * @return an observer which will receive a notification:
+     * 1- a Result with the category if it is successfully added
+     * 2- a Result with an error it is failed
+     * */
     fun addCategory(category: Category): MutableLiveData<Result<Category>> {
         val observer = MutableLiveData<Result<Category>>()
 
@@ -52,6 +71,13 @@ class CategoryDAO {
         return observer
     }
 
+    /**
+     * update a category in the database
+     * @param category the specified category to update
+     * @return an observer which will receive a notification:
+     * 1- a Result with the category if it is successfully updated
+     * 2- a Result with an error it is failed
+     * */
     fun updateCategory(category: Category): MutableLiveData<Result<Category>> {
         val observer = MutableLiveData<Result<Category>>()
 
@@ -69,6 +95,13 @@ class CategoryDAO {
         return observer
     }
 
+    /**
+     * delete a category from the database
+     * @param category the specified category to delete
+     * @return an observer which will receive a notification:
+     * 1- a Result with the category if it is successfully deleted
+     * 2- a Result with an error it is failed
+     * */
     fun deleteCategory(category: Category): MutableLiveData<Result<Category>> {
         val observer = MutableLiveData<Result<Category>>()
 
