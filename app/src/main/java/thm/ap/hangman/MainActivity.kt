@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private val competitionDAO = CompetitionDAO(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
 
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             val user = auth.currentUser
             user?.let {
-                Log.e(TAG,user.uid + " " + user.displayName)
+                Log.e(TAG, user.uid + " " + user.displayName)
                 playerAuth.createPlayer(user)
 
                 playerDAO.getPlayersObserver().observe(this, { result ->
@@ -81,7 +83,6 @@ class MainActivity : AppCompatActivity() {
                         Result.Status.FAILURE -> Log.i(TAG, result.error!!)
                     }
                 })
-
 
             }
 
