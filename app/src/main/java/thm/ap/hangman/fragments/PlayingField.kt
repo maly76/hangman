@@ -72,7 +72,7 @@ class PlayingField : Fragment() {
         } else {
             button.setBackgroundColor(Color.parseColor("#F44336"))
             updateTries()
-            if(gameLogic.getTries() >= gameLogic.getAmountTries()){
+            if (gameLogic.getTries() >= gameLogic.getAmountTries()) {
                 gameLost()
             }
         }
@@ -153,7 +153,6 @@ class PlayingField : Fragment() {
         binding.letterUE.setOnClickListener { onButtonPressed(binding.letterUE) }
         binding.letterOE.setOnClickListener { onButtonPressed(binding.letterOE) }
     }
-
 
 
     companion object {

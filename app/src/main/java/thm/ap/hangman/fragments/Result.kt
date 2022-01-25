@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import thm.ap.hangman.R
-import thm.ap.hangman.databinding.FragmentMainMenuBinding
 import thm.ap.hangman.databinding.FragmentResultBinding
 
 // TODO: Rename parameter arguments, choose names that match
