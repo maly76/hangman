@@ -43,5 +43,14 @@
         android:id="@+id/chooseWord"
         android:name="thm.ap.hangman.fragments.ChooseWord"
         android:label="fragment_choose_word"
-        tools:layout="@layout/fragment_choose_word" />
+        tools:layout="@layout/fragment_choose_word" >
+        <action
+            android:id="@+id/action_chooseWord_to_playingField"
+            app:destination="@id/playingField" />
+    </fragment>
+    <fragment
+        android:id="@+id/playingField"
+        android:name="thm.ap.hangman.fragments.PlayingField"
+        android:label="fragment_playing_field"
+        tools:layout="@layout/fragment_playing_field" />
 </navigation>
