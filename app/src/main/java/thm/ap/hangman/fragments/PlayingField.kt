@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.R
+import thm.ap.hangman.databinding.FragmentMainMenuBinding
 import thm.ap.hangman.databinding.FragmentPlayingFieldBinding
 import thm.ap.hangman.gamelogic.GameLogic
 
@@ -111,11 +113,15 @@ class PlayingField : Fragment() {
     }
 
     private fun gameWon() {
-//        binding.hangmanPlaceholder.text = "You Won!" //TODO go to results
+        val navController = findNavController()
+        val action = PlayingFieldDirections.actionPlayingFieldToResult()
+        navController.navigate(action)
     }
 
     private fun gameLost() {
-//        binding.hangmanPlaceholder.text = "You Lose!" //TODO go to results
+        val navController = findNavController()
+        val action = PlayingFieldDirections.actionPlayingFieldToResult()
+        navController.navigate(action)
     }
 
     private fun bindButtons() {
