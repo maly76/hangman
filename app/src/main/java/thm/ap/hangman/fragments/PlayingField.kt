@@ -48,6 +48,8 @@ class PlayingField : Fragment() {
     ): View? {
         _binding = FragmentPlayingFieldBinding.inflate(inflater, container, false)
         val view = binding.root
+        bindButtons()
+        binding.guessButton.setOnClickListener { guessWord() }
         return view
     }
 
@@ -57,12 +59,6 @@ class PlayingField : Fragment() {
         updateHiddenWord()
         //TODO: write wordToGuess to DB
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
 
     @SuppressLint("SetTextI18n")
     private fun onButtonPressed(button: Button) {
@@ -154,6 +150,7 @@ class PlayingField : Fragment() {
         binding.letterUE.setOnClickListener { onButtonPressed(binding.letterUE) }
         binding.letterOE.setOnClickListener { onButtonPressed(binding.letterOE) }
     }
+
 
 
     companion object {
