@@ -7,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.Keep
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentPlayingFieldBinding
 import thm.ap.hangman.gamelogic.GameLogic
+import java.io.Serializable
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -112,13 +115,17 @@ class PlayingField : Fragment() {
 
     private fun gameWon() {
         val navController = findNavController()
-        val action = PlayingFieldDirections.actionPlayingFieldToResult()
+        val gameResult =
+            GameResult(GameResult.Status.WON, gameLogic.getGuessingWord(), gameLogic.getTries())
+        val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
 
     private fun gameLost() {
         val navController = findNavController()
-        val action = PlayingFieldDirections.actionPlayingFieldToResult()
+        val gameResult =
+            GameResult(GameResult.Status.LOST, gameLogic.getGuessingWord(), gameLogic.getTries())
+        val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
 
@@ -152,6 +159,15 @@ class PlayingField : Fragment() {
         binding.letterAE.setOnClickListener { onButtonPressed(binding.letterAE) }
         binding.letterUE.setOnClickListener { onButtonPressed(binding.letterUE) }
         binding.letterOE.setOnClickListener { onButtonPressed(binding.letterOE) }
+    }
+
+    @Keep
+    class GameResult(val status: Status, val word: String, val tries: Int) : Serializable {
+        enum class Status {
+            WON,
+            LOST,
+            TIE
+        }
     }
 
 

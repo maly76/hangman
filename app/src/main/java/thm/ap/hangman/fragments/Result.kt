@@ -40,6 +40,25 @@ class Result : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
+
+        if (arguments != null) {
+            val gameResult = arguments!!.get("GameResult") as PlayingField.GameResult
+
+            if (gameResult.status == PlayingField.GameResult.Status.WON) {
+                binding.result.text = "You Won!"
+            }
+            if (gameResult.status == PlayingField.GameResult.Status.LOST) {
+                binding.result.text = "You Lost!"
+            }
+            if (gameResult.status == PlayingField.GameResult.Status.TIE) {
+                binding.result.text = "The game is tied!"
+            }
+
+            binding.tries.text = "You took ${gameResult.tries} out of 11 tries"
+
+            binding.guessWord.text = "The word was: ${gameResult.word}"
+        }
+
         val view = binding.root
         return view
     }

@@ -22,9 +22,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="You Won!"
+            android:text="Result Placeholder"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/successful"
@@ -33,7 +33,7 @@
             android:layout_gravity="center"
             android:text="You Guessed the word successfully!"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/tries"
@@ -42,7 +42,7 @@
             android:layout_gravity="center"
             android:text="You took xx out of 11 tries"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/guessWord"
@@ -51,7 +51,7 @@
             android:layout_gravity="center"
             android:text="The word you were guessing: 'XXXX'"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="24sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
