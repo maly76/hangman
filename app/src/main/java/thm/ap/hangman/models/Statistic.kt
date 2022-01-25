@@ -22,9 +22,17 @@ data class Statistic(
         var rates: MutableList<Rate> = mutableListOf()
         var longestWord: String? = null
         var winstreak: Int = 0
+
+        fun getGeneralRate(): Rate {
+            val generalRate = Rate.empty()
+            generalRate.wins = rates.sumOf { rate -> rate.wins }
+            generalRate.losses = rates.sumOf { rate -> rate.losses }
+            generalRate.ties = rates.sumOf { rate -> rate.ties }
+            return generalRate
+        }
     }
 
-    class Rate private constructor(var categoryID: String) {
+    class Rate private constructor(var categoryID: String? = null) {
         var wins: Int = 4
         var losses: Int = 2
         var ties: Int = 0
@@ -44,6 +52,10 @@ data class Statistic(
         companion object {
             fun new(categoryID: String) : Rate {
                 return Rate(categoryID)
+            }
+
+            fun empty(): Rate {
+                return Rate()
             }
         }
     }
