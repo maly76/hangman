@@ -41,6 +41,10 @@ class GameLogic {
         return sb.toString()
     }
 
+    fun getGuessingWord(): String {
+        return wordToGuess
+    }
+
     fun getAmountTries(): Int {
         return amountTries
     }
