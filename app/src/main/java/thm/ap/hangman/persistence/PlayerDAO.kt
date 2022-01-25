@@ -1,6 +1,7 @@
 package thm.ap.hangman.persistence
 
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -81,19 +82,25 @@ class PlayerDAO {
     fun addPlayer(player: Player): MutableLiveData<Result<Player>> {
         val observer = MutableLiveData<Result<Player>>()
 
-        observer.value = Result.inProgress()
-        if (player.id.isNotEmpty()) {
-            playersRef.document(player.id).set(player)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        refreshPlayers()
-                        observer.value = Result.success(player)
-                    } else {
-                        observer.value = Result.failure(task.exception!!.message!!)
-                    }
-                }
-        } else {
-            observer.value = Result.failure("ID cannot be empty")
+        playersRef.document(player.id).get().addOnCompleteListener { task ->
+               if (task.isSuccessful && !task.result!!.exists()) {
+                   observer.value = Result.inProgress()
+                   if (player.id == Firebase.auth.currentUser!!.uid) {
+                       playersRef.document(player.id).set(player)
+                           .addOnCompleteListener { task2 ->
+                               if (task2.isSuccessful) {
+                                   refreshPlayers()
+                                   observer.value = Result.success(player)
+                               } else {
+                                   observer.value = Result.failure(task2.exception!!.message!!)
+                               }
+                           }
+                   } else {
+                       observer.value = Result.failure("ID must be the same user ID")
+                   }
+               } else {
+                   observer.value = Result.failure("Player already exists")
+               }
         }
 
         return observer

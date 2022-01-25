@@ -31,5 +31,4 @@ class PlayerAuth(private val context: Context) {
         val player = Player.new(user.uid, user.displayName, Statistic())
         playerDAO.addPlayer(player)
     }
-
 }
