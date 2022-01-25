@@ -2,6 +2,9 @@ package thm.ap.hangman.models
 
 import com.google.firebase.firestore.DocumentId
 import java.io.Serializable
+import kotlin.math.pow
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 /**
  * Statistic entity
@@ -11,16 +14,37 @@ data class Statistic(
     @set:DocumentId
     var id: String = ""
 ) : Serializable {
-    var wins: Int = 0
-    var losses: Int = 0
-    var winLosRate: Double = 0.0
-    var longestWord: String? = null
-    var winstreak: Int = 0
 
-    /**
-     * calculate the rate
-     * */
-    fun calculateRate() {
-        winLosRate = (wins / losses).toDouble()
+    val mpStats: Stats = Stats()
+    val spStats: Stats = Stats()
+
+    class Stats {
+        var rates: MutableList<Rate> = mutableListOf()
+        var longestWord: String? = null
+        var winstreak: Int = 0
+    }
+
+    class Rate private constructor(var categoryID: String) {
+        var wins: Int = 4
+        var losses: Int = 2
+        var ties: Int = 0
+
+        fun getNumebrOfPlayedGames() = wins + losses + ties
+
+        /**
+         * calculate the rate
+         * */
+        fun getWinLosRate(): Double = if (wins == 0) 0.0 else if (losses == 0) 100.0 else ((wins + 0.5 * (ties)) / getNumebrOfPlayedGames() * 100).roundTo(2)
+
+        fun Double.roundTo(numFractionDigits: Int): Double {
+            val factor = 10.0.pow(numFractionDigits.toDouble())
+            return (this * factor).roundToInt() / factor
+        }
+
+        companion object {
+            fun new(categoryID: String) : Rate {
+                return Rate(categoryID)
+            }
+        }
     }
 }
