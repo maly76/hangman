@@ -60,12 +60,28 @@ class MultiPlayer : Fragment() {
         val navController = findNavController()
 
         binding.buttonEnterRoom.setOnClickListener {
-            val action = MultiPlayerDirections.actionMultiPlayerToChooseWord()
-            navController.navigate(action)
+            //TODO check failure room exists / full
+            playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
+                .observe(viewLifecycleOwner) { result ->
+                    if (result.status == Result.Status.SUCCESS) {
+                        competitionDAO.getCompetitionByID(binding.roomCode.text.toString()).observe(viewLifecycleOwner) { comp ->
+                            //TODO check if room exists
+                            if (comp.status == Result.Status.SUCCESS) {
+                                comp.data!!.guest = result.data
+                                competitionDAO.updateCompetition(comp.data).observe(viewLifecycleOwner) { r ->
+                                    if (r.status == Result.Status.SUCCESS) {
+                                        val action =
+                                            MultiPlayerDirections.actionMultiPlayerToChooseWord()
+                                        navController.navigate(action)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
         }
 
         binding.buttonCreateRoom.setOnClickListener {
-            Log.e("testing", binding.roomCode.text.toString())
             //TODO check failure room exists
             playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
                 .observe(viewLifecycleOwner) { result ->
@@ -77,14 +93,13 @@ class MultiPlayer : Fragment() {
                             )
                         ).observe(viewLifecycleOwner) {
                             if (it.status == Result.Status.SUCCESS) {
+                                val action = MultiPlayerDirections.actionMultiPlayerToChooseWord()
+                                navController.navigate(action)
                                 Log.e("TAG", it.data!!.toString())
                             }
                         }
                     }
                 }
-
-            val action = MultiPlayerDirections.actionMultiPlayerToChooseWord()
-            navController.navigate(action)
         }
     }
 
