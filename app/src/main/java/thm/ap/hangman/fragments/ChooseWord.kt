@@ -79,10 +79,10 @@ class ChooseWord : Fragment() {
                                 competitionDAO.subscribeCompetition(roomId).observe(viewLifecycleOwner) {
                                     if (it.status == Result.Status.SUCCESS) {
                                         val c = it.data!!
-                                        if (isHost && c.guestInfos.hiddenWord != null) {
-                                            binding.hiddenWord.text = GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
-                                        } else if (!isHost && c.hostInfos.hiddenWord != null){
+                                        if (isHost && c.hostInfos.hiddenWord != null) {
                                             binding.hiddenWord.text = GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
+                                        } else if (!isHost && c.guestInfos.hiddenWord != null){
+                                            binding.hiddenWord.text = GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
                                         }
                                         if (c.guest != null && !guestFound) {
                                             guestFound = true
