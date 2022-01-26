@@ -11,24 +11,5 @@ import thm.ap.hangman.models.Statistic
 class PlayerAuth(private val context: Context) {
 
 
-    fun signout() {
-        Firebase.auth.signOut()
-    }
 
-    fun show(resId: Int) {
-        Toast.makeText(
-            context, resId,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    fun getString(resId: Int): String {
-        return context.getString(resId)
-    }
-
-    fun createPlayer(user: FirebaseUser) {
-        val playerDAO = PlayerDAO()
-        val player = Player.new(user.uid, user.displayName, Statistic())
-        playerDAO.addPlayer(player)
-    }
 }
