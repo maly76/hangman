@@ -84,7 +84,7 @@ class ChooseWord : Fragment() {
                                         } else if (!isHost && c.hostInfos.hiddenWord != null){
                                             binding.hiddenWord.text = GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
                                         }
-                                        if (c.guest != null && guestFound) {
+                                        if (c.guest != null && !guestFound) {
                                             guestFound = true
                                             val hiddenword = c.guestInfos.hiddenWord
                                             if (hiddenword != null) {
