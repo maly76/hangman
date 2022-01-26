@@ -15,6 +15,7 @@ import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentChooseWordBinding
 import thm.ap.hangman.databinding.FragmentMultiPlayerBinding
 import thm.ap.hangman.gamelogic.GameLogic
+import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
 import thm.ap.hangman.persistence.CompetitionDAO
 import thm.ap.hangman.service.AuthenticationService
@@ -37,6 +38,8 @@ class ChooseWord : Fragment() {
     private var _binding: FragmentChooseWordBinding? = null
     private val binding get() = _binding!!
     private var roomID: String? = null
+    private var guestFound = false
+    private var isHost = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +65,7 @@ class ChooseWord : Fragment() {
                         binding.room.text = "Room code: ${comp.roomCode}"
                         if(AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
                             /** HOST */
+                            isHost = true
                             if (comp.guest != null) {
                                 val hiddenword = comp.guestInfos.hiddenWord
                                 if (hiddenword != null) {
@@ -75,7 +79,13 @@ class ChooseWord : Fragment() {
                                 competitionDAO.subscribeCompetition(roomId).observe(viewLifecycleOwner) {
                                     if (it.status == Result.Status.SUCCESS) {
                                         val c = it.data!!
-                                        if (c.guest != null) {
+                                        if (isHost && c.guestInfos.hiddenWord != null) {
+                                            binding.hiddenWord.text = GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
+                                        } else if (!isHost && c.hostInfos.hiddenWord != null){
+                                            binding.hiddenWord.text = GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
+                                        }
+                                        if (c.guest != null && guestFound) {
+                                            guestFound = true
                                             val hiddenword = c.guestInfos.hiddenWord
                                             if (hiddenword != null) {
                                                 binding.hiddenWord.text = GameLogic.generateHiddenWord(hiddenword)
@@ -83,6 +93,12 @@ class ChooseWord : Fragment() {
                                             binding.oponent.text = c.guest!!.userName
                                             binding.indeterminateBar.visibility = View.GONE
                                             setVisible(true)
+                                        }
+
+                                        if (c.guest != null && c.hostInfos.status == Player.Status.READY && c.guestInfos.status == Player.Status.READY) {
+                                            val navController = findNavController()
+                                            val action = ChooseWordDirections.actionChooseWordToPlayingField(roomID!!)
+                                            navController.navigate(action)
                                         }
                                     }
                                 }
@@ -117,12 +133,21 @@ class ChooseWord : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val navController = findNavController()
-
         val buttonOk: Button = view.findViewById(R.id.button_ok)
         buttonOk.setOnClickListener {
-            val action = ChooseWordDirections.actionChooseWordToPlayingField(roomID!!)
-            navController.navigate(action)
+            competitionDAO.getCompetitionByID(roomID!!).observe(viewLifecycleOwner) { result ->
+                if (result.status == Result.Status.SUCCESS) {
+                    val comp = result.data!!
+                    if (isHost) {
+                        comp.guestInfos.hiddenWord = binding.word.text.toString()
+                        comp.hostInfos.status = Player.Status.READY
+                    } else {
+                        comp.hostInfos.hiddenWord = binding.word.text.toString()
+                        comp.guestInfos.status = Player.Status.READY
+                    }
+                    competitionDAO.updateCompetition(comp)
+                }
+            }
         }
     }
 
