@@ -60,29 +60,30 @@ class MultiPlayer : Fragment() {
         val navController = findNavController()
 
         binding.buttonEnterRoom.setOnClickListener {
-            //TODO check failure room exists / full
             playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
                 .observe(viewLifecycleOwner) { result ->
                     if (result.status == Result.Status.SUCCESS) {
                         competitionDAO.getCompetitionByID(binding.roomCode.text.toString()).observe(viewLifecycleOwner) { comp ->
-                            //TODO check if room exists
                             if (comp.status == Result.Status.SUCCESS) {
                                 comp.data!!.guest = result.data
                                 competitionDAO.updateCompetition(comp.data).observe(viewLifecycleOwner) { r ->
                                     if (r.status == Result.Status.SUCCESS) {
                                         val action =
-                                            MultiPlayerDirections.actionMultiPlayerToChooseWord()
+                                            MultiPlayerDirections.actionMultiPlayerToChooseWord(comp.data.roomCode)
                                         navController.navigate(action)
                                     }
                                 }
+                            } else if (result.status == Result.Status.FAILURE) {
+                                binding.errNotExists.visibility = View.VISIBLE
                             }
                         }
+                    } else if (result.status == Result.Status.FAILURE) {
+                        binding.errFull.visibility = View.VISIBLE
                     }
                 }
         }
 
         binding.buttonCreateRoom.setOnClickListener {
-            //TODO check failure room exists
             playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
                 .observe(viewLifecycleOwner) { result ->
                     if (result.status == Result.Status.SUCCESS) {
@@ -93,9 +94,10 @@ class MultiPlayer : Fragment() {
                             )
                         ).observe(viewLifecycleOwner) {
                             if (it.status == Result.Status.SUCCESS) {
-                                val action = MultiPlayerDirections.actionMultiPlayerToChooseWord()
+                                val action = MultiPlayerDirections.actionMultiPlayerToChooseWord(it.data!!.roomCode)
                                 navController.navigate(action)
-                                Log.e("TAG", it.data!!.toString())
+                            } else if (result.status == Result.Status.FAILURE) {
+                                binding.errExists.visibility = View.VISIBLE
                             }
                         }
                     }

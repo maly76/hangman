@@ -64,20 +64,34 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/err_exists"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Room code already taken"
+            android:text="Room with this code already exists"
             android:textColor="#d22"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone"/>
 
         <TextView
+            android:id="@+id/err_not_exists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="There is no room with this code"
+            android:textColor="#d22"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/err_full"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Room is already full"
             android:textColor="#d22"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone"/>
 
 
         <LinearLayout

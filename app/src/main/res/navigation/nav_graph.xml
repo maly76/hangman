@@ -51,6 +51,9 @@
         <action
             android:id="@+id/action_chooseWord_to_playingField"
             app:destination="@id/playingField" />
+        <argument
+            android:name="roomId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/playingField"
