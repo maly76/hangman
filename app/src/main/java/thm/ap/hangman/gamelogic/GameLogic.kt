@@ -7,7 +7,7 @@ class GameLogic {
     private var wordToGuess = "Zucchini"
     private lateinit var hiddenWord: String
     private var tries = 0
-    private val amountTries = 10
+    private val amountTries = 11
 
     init {
         generateHiddenWord()
@@ -39,6 +39,10 @@ class GameLogic {
             sb.append(" ")
         }
         return sb.toString()
+    }
+
+    fun getGuessingWord(): String {
+        return wordToGuess
     }
 
     fun getAmountTries(): Int {

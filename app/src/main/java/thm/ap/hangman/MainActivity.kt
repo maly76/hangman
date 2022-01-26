@@ -14,6 +14,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import thm.ap.hangman.models.Competition
+import thm.ap.hangman.models.Player
+import thm.ap.hangman.models.Result
 import thm.ap.hangman.persistence.CategoryDAO
 import thm.ap.hangman.persistence.CompetitionDAO
 import thm.ap.hangman.persistence.PlayerDAO

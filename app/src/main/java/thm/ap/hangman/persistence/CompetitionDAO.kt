@@ -82,8 +82,7 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
         val observer = MutableLiveData<Competition>()
 
         snapshot.hostRef?.get()?.addOnSuccessListener { firstOne ->
-            val comp = Competition(roomCode = snapshot.id, host = firstOne.toObject<Player>()!!)
-            comp.gameInfos = snapshot.gameInfos
+            val comp = Competition(roomCode = snapshot.id, host = firstOne.toObject<Player>()!!, hostInfos = snapshot.hostInfos!!, guestInfos = snapshot.guestInfos!!)
             if (snapshot.guestRef != null) {
                 snapshot.guestRef?.get()?.addOnSuccessListener { secondOne ->
                     comp.guest = secondOne.toObject<Player>()
@@ -164,14 +163,16 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
                         Result.failure("There is a competition with the same room code")
                 } else {
                     val hostRef = playersRef.document(competition.host.id)
-                    val guestRef = if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
+                    val guestRef =
+                        if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
 
                     competitionsRef.document(competition.roomCode).set(
                         CompetitionSnapshot.new(
                             competition.roomCode,
                             hostRef,
                             guestRef,
-                            MultiPlayerGame()
+                            competition.hostInfos,
+                            competition.guestInfos
                         )
                     )
                         .addOnSuccessListener {
@@ -197,14 +198,16 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
 
         observer.value = Result.inProgress()
         val hostRef = playersRef.document(competition.host.id)
-        val guestRef = if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
+        val guestRef =
+            if (competition.guest != null) playersRef.document(competition.guest!!.id) else null
 
         competitionsRef.document(competition.roomCode).set(
             CompetitionSnapshot.new(
                 competition.roomCode,
                 hostRef,
                 guestRef,
-                competition.gameInfos
+                competition.hostInfos,
+                competition.guestInfos
             )
         )
             .addOnCompleteListener { task ->
@@ -265,7 +268,8 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
     ) : Serializable {
         var hostRef: DocumentReference? = null
         var guestRef: DocumentReference? = null
-        var gameInfos: MultiPlayerGame? = null
+        var hostInfos: Competition.PlayerInfos? = null
+        var guestInfos: Competition.PlayerInfos? = null
 
         companion object {
             /**
@@ -279,12 +283,14 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
                 roomCode: String,
                 hostRef: DocumentReference?,
                 guestRef: DocumentReference?,
-                gameInfos: MultiPlayerGame?
+                hostInfos: Competition.PlayerInfos?,
+                guestInfos: Competition.PlayerInfos?
             ): CompetitionSnapshot {
                 val compSnapshot = CompetitionSnapshot(roomCode)
                 compSnapshot.hostRef = hostRef
                 compSnapshot.guestRef = guestRef
-                compSnapshot.gameInfos = gameInfos
+                compSnapshot.hostInfos = hostInfos
+                compSnapshot.guestInfos = guestInfos
                 return compSnapshot
             }
         }

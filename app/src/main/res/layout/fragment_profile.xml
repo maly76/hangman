@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:text="Player name"
             android:textAlignment="center"
-            android:textSize="26sp" />
+            android:textSize="26sp"
+            />
 
         <TextView
             android:id="@+id/sp"
@@ -31,7 +32,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/played_sp"
+            android:id="@+id/played"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Games played: 21"
@@ -59,6 +60,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Win ratio: 48%"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/longest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Longest word: Placeholder"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/streak"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Longest winstreak: 99"
             android:textAlignment="center"
             android:textSize="16sp" />
 
@@ -100,6 +117,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Win ratio: 66%"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/longest_mp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Longest word: Placeholder"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/streak_mp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Longest winstreak: 99"
             android:textAlignment="center"
             android:textSize="16sp" />
     </LinearLayout>

@@ -24,15 +24,61 @@
         android:id="@+id/singlePlayer"
         android:name="thm.ap.hangman.fragments.SinglePlayer"
         android:label="fragment_single_player"
-        tools:layout="@layout/fragment_single_player" />
+        tools:layout="@layout/fragment_single_player">
+        <action
+            android:id="@+id/action_singlePlayer_to_categories"
+            app:destination="@id/categories" />
+    </fragment>
     <fragment
         android:id="@+id/multiPlayer"
         android:name="thm.ap.hangman.fragments.MultiPlayer"
         android:label="fragment_multi_player"
-        tools:layout="@layout/fragment_multi_player" />
+        tools:layout="@layout/fragment_multi_player">
+        <action
+            android:id="@+id/action_multiPlayer_to_chooseWord"
+            app:destination="@id/chooseWord" />
+    </fragment>
     <fragment
         android:id="@+id/profile"
         android:name="thm.ap.hangman.fragments.Profile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/chooseWord"
+        android:name="thm.ap.hangman.fragments.ChooseWord"
+        android:label="fragment_choose_word"
+        tools:layout="@layout/fragment_choose_word">
+        <action
+            android:id="@+id/action_chooseWord_to_playingField"
+            app:destination="@id/playingField" />
+    </fragment>
+    <fragment
+        android:id="@+id/playingField"
+        android:name="thm.ap.hangman.fragments.PlayingField"
+        android:label="fragment_playing_field"
+        tools:layout="@layout/fragment_playing_field">
+        <action
+            android:id="@+id/action_playingField_to_result"
+            app:destination="@id/result" />
+    </fragment>
+    <fragment
+        android:id="@+id/result"
+        android:name="thm.ap.hangman.fragments.Result"
+        android:label="fragment_result"
+        tools:layout="@layout/fragment_result">
+        <action
+            android:id="@+id/action_result_to_chooseWord"
+            app:destination="@id/chooseWord" />
+        <action
+            android:id="@+id/action_result_to_mainMenu"
+            app:destination="@id/mainMenu" />
+        <argument
+            android:name="GameResult"
+            app:argType="thm.ap.hangman.fragments.PlayingField$GameResult" />
+    </fragment>
+    <fragment
+        android:id="@+id/categories"
+        android:name="thm.ap.hangman.fragments.Categories"
+        android:label="fragment_categories"
+        tools:layout="@layout/fragment_categories" />
 </navigation>
