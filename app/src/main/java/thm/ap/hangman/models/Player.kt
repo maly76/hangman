@@ -43,6 +43,7 @@ data class Player(
         WON,
         LOSED,
         PLAYING,
-        OFFLINE
+        OFFLINE,
+        READY
     }
 }
