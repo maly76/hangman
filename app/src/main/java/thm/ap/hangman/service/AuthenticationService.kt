@@ -26,20 +26,18 @@ class AuthenticationService (val context: Context) {
         .requestServerAuthCode(context.getString(R.string.default_web_client_id))
         .requestIdToken(context.getString(R.string.default_web_client_id))
         .build()
-    private val authObserver = MutableLiveData<Result>()
 
-    fun tryAuthenticating(): MutableLiveData<Result> {
+    val TAG = "test"
 
+    fun authenticate(){
         val currentUser = Firebase.auth.currentUser
         if (currentUser == null) {
             signInSilently()
         } else {
             currentUser.let {
-                Log.e(TAG, currentUser.uid + " " + currentUser.displayName)
+                Log.e("test", currentUser!!.uid + " " + currentUser!!.displayName)
             }
-            authObserver.value = Result.success(currentUser)
         }
-        return authObserver
     }
 
     private fun signInSilently() {
@@ -59,7 +57,9 @@ class AuthenticationService (val context: Context) {
                         val signedInAccount = task.result
                         firebaseAuthWithPlayGames(signedInAccount!!)
                     } else {
-                        authObserver.value = Result.shouldSignIn()
+                        //main.signinintent
+                        var mContext = context as MainActivity
+                        mContext.startSignInIntent()
                     }
                 }
         }
@@ -77,12 +77,11 @@ class AuthenticationService (val context: Context) {
                     Log.d(TAG, "signInWithCredential:success")
                     val user = Firebase.auth.currentUser
                     user?.let {
-                        Log.e(AuthenticationService.TAG, user.uid + " " + user.displayName)
+                        Log.e(TAG, user.uid + " " + user.displayName)
                     }
-                    authObserver.value = Result.success(auth.currentUser!!)
                 } else {
                     // If sign in fails, display a message to the user.
-                    authObserver.value = Result.failure(task.exception!!)
+                    (context as MainActivity).finish()
                 }
             }
     }
@@ -106,28 +105,5 @@ class AuthenticationService (val context: Context) {
         val playerDAO = PlayerDAO()
         val player = Player.new(user.uid, user.displayName, Statistic())
         playerDAO.addPlayer(player)
-    }
-
-    companion object {
-        const val TAG = "testing"
-
-        fun of(context: Context): AuthenticationService {
-            return AuthenticationService(context)
-        }
-    }
-
-    enum class Status {
-        SUCCESS,
-        SIGN_IN,
-        FAILURE
-    }
-
-    class Result(val status: Status, val user: FirebaseUser? = null, val exception: Exception? = null) {
-        companion object {
-            fun success(user: FirebaseUser) = Result(Status.SUCCESS, user)
-            fun shouldSignIn() = Result(Status.SIGN_IN)
-            //fun finishSignIn(user: FirebaseUser) = Result(Status.FINISH_SIGN_IN, user)
-            fun failure(exception: Exception) = Result(Status.FAILURE, exception = exception)
-        }
     }
 }
