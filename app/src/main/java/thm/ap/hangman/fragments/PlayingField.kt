@@ -41,6 +41,7 @@ class PlayingField : Fragment() {
 
     private val competitionDAO = CompetitionDAO(viewLifecycleOwner)
 
+    private var isMultiPlayer = false
     private lateinit var roomId: String
     private var isHost = false
 
@@ -56,12 +57,13 @@ class PlayingField : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentPlayingFieldBinding.inflate(inflater, container, false)
         bindButtons()
         binding.guessButton.setOnClickListener { guessWord() }
 
         if (arguments != null) {
+            isMultiPlayer = true
             roomId = requireArguments().getString("roomId").toString()
             competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
                 // Check if user is host or guest
@@ -71,6 +73,8 @@ class PlayingField : Fragment() {
                     isHost = true
                 }
             }
+        } else {
+            isMultiPlayer = false
         }
 
         val view = binding.root
@@ -111,11 +115,13 @@ class PlayingField : Fragment() {
     }
 
     private fun updateHiddenWord() {
-        competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
-            if (isHost) {
-                comp.data!!.hostInfos.hiddenWord?.let { gameLogic.setWord(it) }
-            } else {
-                comp.data!!.guestInfos.hiddenWord?.let { gameLogic.setWord(it) }
+        if (isMultiPlayer) {
+            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
+                if (isHost) {
+                    comp.data!!.hostInfos.hiddenWord?.let { gameLogic.setWord(it) }
+                } else {
+                    comp.data!!.guestInfos.hiddenWord?.let { gameLogic.setWord(it) }
+                }
             }
         }
         binding.word.text = gameLogic.getHiddenWord()
@@ -136,11 +142,13 @@ class PlayingField : Fragment() {
             11 -> binding.imageView.setImageResource(R.drawable.hangman_11)
             else -> binding.imageView.setImageResource(R.drawable.hangman_11)
         }
-        competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) {
-            if (isHost) {
-                it.data!!.hostInfos.tries = gameLogic.getTries()
-            } else {
-                it.data!!.guestInfos.tries = gameLogic.getTries()
+        if (isMultiPlayer) {
+            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) {
+                if (isHost) {
+                    it.data!!.hostInfos.tries = gameLogic.getTries()
+                } else {
+                    it.data!!.guestInfos.tries = gameLogic.getTries()
+                }
             }
         }
     }
