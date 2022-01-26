@@ -26,6 +26,7 @@ class GameLogic {
 
     fun setWord(word: String) {
         this.wordToGuess = word
+        generateHiddenWord()
     }
 
     fun getTries(): Int {
