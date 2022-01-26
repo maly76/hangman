@@ -16,6 +16,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import thm.ap.hangman.models.Competition
+import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
 import thm.ap.hangman.persistence.CategoryDAO
 import thm.ap.hangman.persistence.CompetitionDAO
@@ -44,6 +46,16 @@ class MainActivity : AppCompatActivity() {
             .requestServerAuthCode(getString(R.string.default_web_client_id))
             .requestIdToken(getString(R.string.default_web_client_id))
             .build()
+
+        playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid).observe(this, { result ->
+            if (result.status == Result.Status.SUCCESS) {
+                competitionDAO.addCompetition(Competition("765", result.data!!)).observe(this, {
+                    if (it.status == Result.Status.SUCCESS) {
+                        Log.e("TAG", it.data!!.toString())
+                    }
+                })
+            }
+        })
 
         setContentView(R.layout.activity_main)
     }
@@ -152,6 +164,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
                     loginFlow(user)
+                    playerAuth.createPlayer(user!!)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
