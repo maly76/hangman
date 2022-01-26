@@ -101,7 +101,9 @@ class GameLogic {
 
     companion object {
         fun generateHiddenWord(word: String): String {
-            return word.replace(Regex("""[a-zA-Z'äöüÄÖÜ]"""), "_")
+            var hidden = word.replace(Regex("""[a-zA-Z'äöüÄÖÜ]"""), "_")
+            hidden = hidden.replace("", " ").trim()
+            return hidden
         }
     }
 }
