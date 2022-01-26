@@ -1,11 +1,17 @@
 package thm.ap.hangman.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import thm.ap.hangman.R
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.selection.*
+import androidx.recyclerview.widget.RecyclerView
+import thm.ap.hangman.adapters.CustomCategoriesAdapter
+import thm.ap.hangman.databinding.FragmentSinglePlayerBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +28,14 @@ class SinglePlayer : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var _binding: FragmentSinglePlayerBinding? = null
+    private val binding get() = _binding!!
+
+    var tracker: SelectionTracker<Long>? = null
+    lateinit var customCategoriesAdapter: CustomCategoriesAdapter
+
+    lateinit var dataSetSelected: List<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -31,11 +45,84 @@ class SinglePlayer : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_single_player, container, false)
+        _binding = FragmentSinglePlayerBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        var dataSet: Array<String> = arrayOf("one", "two", "three", "four")
+        customCategoriesAdapter = CustomCategoriesAdapter(dataSet)
+        binding.recyclerviewCategories.adapter = customCategoriesAdapter
+
+        tracker = SelectionTracker.Builder<Long>(
+            "mySelection",
+            binding.recyclerviewCategories,
+            StableIdKeyProvider(binding.recyclerviewCategories),
+            ItemLookup(binding.recyclerviewCategories),
+            StorageStrategy.createLongStorage()
+        ).withSelectionPredicate(
+            SelectionPredicates.createSelectAnything()
+        ).build()
+        customCategoriesAdapter.setTracker(tracker)
+
+        tracker?.addObserver(object: SelectionTracker.SelectionObserver<Long>() {
+            override fun onSelectionChanged() {
+                //handle the selected according to your logic
+            }
+        })
+
+        tracker?.addObserver(
+            object : SelectionTracker.SelectionObserver<Long>() {
+                override fun onSelectionChanged() {
+                    dataSetSelected = tracker?.selection!!.map {
+                        customCategoriesAdapter.dataSet[it.toInt()]
+                    }.toList()
+                    Log.e("test", dataSetSelected.toString()) //list of selected dataSet elements
+                }
+            })
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val navController = findNavController()
+
+        binding.buttonChoose.setOnClickListener {
+            val action = SinglePlayerDirections.actionSinglePlayerToPlayingField()
+            navController.navigate(action)//pass useful data
+        }
+    }
+
+    inner class ItemIdKeyProvider(private val recyclerView: RecyclerView)
+        : ItemKeyProvider<Long>(SCOPE_MAPPED) {
+
+        override fun getKey(position: Int): Long? {
+            return recyclerView.adapter?.getItemId(position)
+                ?: throw IllegalStateException("RecyclerView adapter is not set!")
+        }
+
+        override fun getPosition(key: Long): Int {
+            val viewHolder = recyclerView.findViewHolderForItemId(key)
+            return viewHolder?.layoutPosition ?: RecyclerView.NO_POSITION
+        }
+    }
+
+    inner class ItemLookup(private val rv: RecyclerView)
+        : ItemDetailsLookup<Long>() {
+        override fun getItemDetails(event: MotionEvent)
+                : ItemDetails<Long>? {
+
+            val view = rv.findChildViewUnder(event.x, event.y)
+            if(view != null) {
+                return (rv.getChildViewHolder(view) as CustomCategoriesAdapter.ViewHolder)
+                    .getItemDetails()
+            }
+            return null
+        }
     }
 
     companion object {
