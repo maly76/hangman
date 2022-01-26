@@ -83,24 +83,24 @@ class PlayerDAO {
         val observer = MutableLiveData<Result<Player>>()
 
         playersRef.document(player.id).get().addOnCompleteListener { task ->
-               if (task.isSuccessful && !task.result!!.exists()) {
-                   observer.value = Result.inProgress()
-                   if (player.id == Firebase.auth.currentUser!!.uid) {
-                       playersRef.document(player.id).set(player)
-                           .addOnCompleteListener { task2 ->
-                               if (task2.isSuccessful) {
-                                   refreshPlayers()
-                                   observer.value = Result.success(player)
-                               } else {
-                                   observer.value = Result.failure(task2.exception!!.message!!)
-                               }
-                           }
-                   } else {
-                       observer.value = Result.failure("ID must be the same user ID")
-                   }
-               } else {
-                   observer.value = Result.failure("Player already exists")
-               }
+            if (task.isSuccessful && !task.result!!.exists()) {
+                observer.value = Result.inProgress()
+                if (player.id == Firebase.auth.currentUser!!.uid) {
+                    playersRef.document(player.id).set(player)
+                        .addOnCompleteListener { task2 ->
+                            if (task2.isSuccessful) {
+                                refreshPlayers()
+                                observer.value = Result.success(player)
+                            } else {
+                                observer.value = Result.failure(task2.exception!!.message!!)
+                            }
+                        }
+                } else {
+                    observer.value = Result.failure("ID must be the same user ID")
+                }
+            } else {
+                observer.value = Result.failure("Player already exists")
+            }
         }
 
         return observer

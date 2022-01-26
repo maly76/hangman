@@ -7,7 +7,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Competition
-import thm.ap.hangman.models.MultiPlayerGame
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
 import java.io.Serializable
@@ -82,7 +81,12 @@ class CompetitionDAO(private val owner: AppCompatActivity) {
         val observer = MutableLiveData<Competition>()
 
         snapshot.hostRef?.get()?.addOnSuccessListener { firstOne ->
-            val comp = Competition(roomCode = snapshot.id, host = firstOne.toObject<Player>()!!, hostInfos = snapshot.hostInfos!!, guestInfos = snapshot.guestInfos!!)
+            val comp = Competition(
+                roomCode = snapshot.id,
+                host = firstOne.toObject<Player>()!!,
+                hostInfos = snapshot.hostInfos!!,
+                guestInfos = snapshot.guestInfos!!
+            )
             if (snapshot.guestRef != null) {
                 snapshot.guestRef?.get()?.addOnSuccessListener { secondOne ->
                     comp.guest = secondOne.toObject<Player>()

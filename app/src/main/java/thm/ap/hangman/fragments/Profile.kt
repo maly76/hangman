@@ -52,7 +52,8 @@ class Profile : Fragment() {
 
                 val spStats: Statistic.Stats? = it.data.statistic?.spStats
                 if (spStats != null) {
-                    binding.played.text = "Games played: ${spStats.getGeneralRate().getNumebrOfPlayedGames()}"
+                    binding.played.text =
+                        "Games played: ${spStats.getGeneralRate().getNumebrOfPlayedGames()}"
                     binding.won.text = "Games Won: ${spStats.getGeneralRate().wins}"
                     binding.lost.text = "Games Lost: ${spStats.getGeneralRate().losses}"
                     binding.ratio.text = "Win ratio: ${spStats.getGeneralRate().getWinLosRate()}%"
@@ -62,7 +63,8 @@ class Profile : Fragment() {
 
                 val mpStats: Statistic.Stats? = it.data.statistic?.mpStats
                 if (mpStats != null) {
-                    binding.playedMp.text = "Games played: ${mpStats.getGeneralRate().getNumebrOfPlayedGames()}"
+                    binding.playedMp.text =
+                        "Games played: ${mpStats.getGeneralRate().getNumebrOfPlayedGames()}"
                     binding.wonMp.text = "Games Won: ${mpStats.getGeneralRate().wins}"
                     binding.lostMp.text = "Games Lost: ${mpStats.getGeneralRate().losses}"
                     binding.ratioMp.text = "Win ratio: ${mpStats.getGeneralRate().getWinLosRate()}%"

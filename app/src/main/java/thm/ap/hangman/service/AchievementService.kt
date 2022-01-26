@@ -10,7 +10,7 @@ import com.google.android.gms.tasks.Task
  * AchievementService
  * managing the achievements from in google plays
  * */
-class AchievementService private constructor(val context: Context){
+class AchievementService private constructor(val context: Context) {
 
     /**
      * call the achievements of a player

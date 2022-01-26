@@ -1,12 +1,20 @@
 package thm.ap.hangman.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.databinding.FragmentMultiPlayerBinding
+import thm.ap.hangman.models.Competition
+import thm.ap.hangman.models.Result
+import thm.ap.hangman.persistence.CompetitionDAO
+import thm.ap.hangman.persistence.PlayerDAO
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,6 +33,9 @@ class MultiPlayer : Fragment() {
 
     private var _binding: FragmentMultiPlayerBinding? = null
     private val binding get() = _binding!!
+
+//    private val playerDAO = PlayerDAO()
+//    private val competitionDAO = CompetitionDAO(viewLifecycleOwner as AppCompatActivity)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +61,23 @@ class MultiPlayer : Fragment() {
         val navController = findNavController()
 
         binding.buttonEnterRoom.setOnClickListener {
+            //TODO check failure room exists
+//            playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
+//                .observe(viewLifecycleOwner) { result ->
+//                    if (result.status == Result.Status.SUCCESS) {
+//                        competitionDAO.addCompetition(
+//                            Competition(
+//                                binding.roomCode.text.toString(),
+//                                result.data!!
+//                            )
+//                        ).observe(viewLifecycleOwner) {
+//                            if (it.status == Result.Status.SUCCESS) {
+//                                Log.e("TAG", it.data!!.toString())
+//                            }
+//                        }
+//                    }
+//                }
+
             val action = MultiPlayerDirections.actionMultiPlayerToChooseWord()
             navController.navigate(action)
         }

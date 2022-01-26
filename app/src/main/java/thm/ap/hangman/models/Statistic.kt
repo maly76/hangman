@@ -3,7 +3,6 @@ package thm.ap.hangman.models
 import com.google.firebase.firestore.DocumentId
 import java.io.Serializable
 import kotlin.math.pow
-import kotlin.math.round
 import kotlin.math.roundToInt
 
 /**
@@ -42,7 +41,10 @@ data class Statistic(
         /**
          * calculate the rate
          * */
-        fun getWinLosRate(): Double = if (wins == 0) 0.0 else if (losses == 0) 100.0 else ((wins + 0.5 * (ties)) / getNumebrOfPlayedGames() * 100).roundTo(2)
+        fun getWinLosRate(): Double =
+            if (wins == 0) 0.0 else if (losses == 0) 100.0 else ((wins + 0.5 * (ties)) / getNumebrOfPlayedGames() * 100).roundTo(
+                2
+            )
 
         fun Double.roundTo(numFractionDigits: Int): Double {
             val factor = 10.0.pow(numFractionDigits.toDouble())
@@ -50,7 +52,7 @@ data class Statistic(
         }
 
         companion object {
-            fun new(categoryID: String) : Rate {
+            fun new(categoryID: String): Rate {
                 return Rate(categoryID)
             }
 

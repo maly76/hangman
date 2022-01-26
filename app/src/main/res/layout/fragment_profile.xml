@@ -19,8 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Player name"
             android:textAlignment="center"
-            android:textSize="26sp"
-            />
+            android:textSize="26sp" />
 
         <TextView
             android:id="@+id/sp"

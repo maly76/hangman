@@ -1,10 +1,8 @@
 package thm.ap.hangman.service
 
-import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -18,18 +16,18 @@ import thm.ap.hangman.R
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
 import thm.ap.hangman.persistence.PlayerDAO
-import java.lang.Exception
 
-class AuthenticationService (val context: Context) {
+class AuthenticationService(val context: Context) {
     private var auth: FirebaseAuth = Firebase.auth
-    var gso: GoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-        .requestServerAuthCode(context.getString(R.string.default_web_client_id))
-        .requestIdToken(context.getString(R.string.default_web_client_id))
-        .build()
+    var gso: GoogleSignInOptions =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+            .requestServerAuthCode(context.getString(R.string.default_web_client_id))
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .build()
 
     val TAG = "test"
 
-    fun authenticate(){
+    fun authenticate() {
         val currentUser = Firebase.auth.currentUser
         if (currentUser == null) {
             signInSilently()
