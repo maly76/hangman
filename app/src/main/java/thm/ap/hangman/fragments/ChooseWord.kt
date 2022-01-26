@@ -36,6 +36,7 @@ class ChooseWord : Fragment() {
     private val competitionDAO = CompetitionDAO(this)
     private var _binding: FragmentChooseWordBinding? = null
     private val binding get() = _binding!!
+    private var roomID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +54,7 @@ class ChooseWord : Fragment() {
 
         arguments?.let {
             val roomId = requireArguments().getString("roomId")
+            roomID = roomId
             roomId.let {
                 competitionDAO.getCompetitionByID(roomId!!).observe(viewLifecycleOwner) { result ->
                     if (result.status == Result.Status.SUCCESS) {
@@ -119,7 +121,7 @@ class ChooseWord : Fragment() {
 
         val buttonOk: Button = view.findViewById(R.id.button_ok)
         buttonOk.setOnClickListener {
-            val action = ChooseWordDirections.actionChooseWordToPlayingField()
+            val action = ChooseWordDirections.actionChooseWordToPlayingField(roomID!!)
             navController.navigate(action)
         }
     }
