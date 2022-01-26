@@ -115,7 +115,6 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
             parseCompetition(data).observe(owner) { comp ->
                 compts.add(comp)
                 if (index == snapshots.size() - 1) {
-                    compts.removeIf { competition -> competition.roomCode == "baseline" }
                     observer.value = compts
                 }
             }

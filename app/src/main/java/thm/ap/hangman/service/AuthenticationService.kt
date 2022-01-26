@@ -106,4 +106,10 @@ class AuthenticationService(val context: Context) {
         val player = Player.new(user.uid, user.displayName, Statistic())
         playerDAO.addPlayer(player)
     }
+
+    companion object {
+        fun getCurrentUser(): FirebaseUser? {
+            return Firebase.auth.currentUser
+        }
+    }
 }

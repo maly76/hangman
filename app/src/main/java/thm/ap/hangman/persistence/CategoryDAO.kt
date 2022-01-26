@@ -39,7 +39,6 @@ class CategoryDAO {
                         val category = doc.toObject<Category>()
                         cats.add(category)
                     }
-                    cats.removeIf { cat -> cat.id == "baseline" }
                     categoriesObserver.value = Result.success(cats)
                 } else {
                     categoriesObserver.value = Result.failure(task.exception!!.message!!)

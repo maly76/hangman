@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:text="Room code: 123"
+            android:text=""
             android:textAlignment="center"
             android:textSize="16sp" />
 
@@ -33,9 +33,20 @@
             android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:text="Your oponent is 'XXXX'"
+            android:text=""
             android:textAlignment="center"
             android:textSize="16sp" />
+
+        <ProgressBar
+            android:id="@+id/indeterminateBar"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="50dp"
+            android:minWidth="200dp"
+            android:minHeight="300dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/oponentWord"
@@ -45,7 +56,8 @@
             android:layout_weight="1"
             android:text="The word your oponent has chosen for you:'"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/hiddenWord"
@@ -54,41 +66,44 @@
             android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:text="'_ _ _ _ _ _ _ _ _ _'"
+            android:text=""
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/choseHiddenWord"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:text="Choose a word for your oponent:"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center">
 
-
             <EditText
-                android:id="@+id/room_code"
+                android:id="@+id/word"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_weight="1"
                 android:inputType="textNoSuggestions"
-                android:maxLength="3" />
+                android:maxLength="3"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/button_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OK" />
+                android:text="OK"
+                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>
