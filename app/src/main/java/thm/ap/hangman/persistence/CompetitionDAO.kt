@@ -1,6 +1,7 @@
 package thm.ap.hangman.persistence
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -15,7 +16,7 @@ import java.io.Serializable
  * CompetitionDAO for managing the competitions in the database
  * @param owner the activity which calls the service because the lifecycle is required on observing
  * */
-class CompetitionDAO(private val owner: AppCompatActivity) {
+class CompetitionDAO(private val owner: LifecycleOwner) {
     private val competitionsRef: CollectionReference = Firebase.firestore.collection(TAG)
     private lateinit var competitionRegistration: ListenerRegistration
 
