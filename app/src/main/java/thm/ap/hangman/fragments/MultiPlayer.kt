@@ -59,6 +59,7 @@ class MultiPlayer : Fragment() {
 
         val navController = findNavController()
 
+        //TODO check if room code was entered
         binding.buttonEnterRoom.setOnClickListener {
             playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
                 .observe(viewLifecycleOwner) { result ->
@@ -73,11 +74,13 @@ class MultiPlayer : Fragment() {
                                         navController.navigate(action)
                                     }
                                 }
-                            } else if (result.status == Result.Status.FAILURE) {
+                            } else if (result.status != Result.Status.IN_PROGRESS) {
+                                //TODO clear error after time
                                 binding.errNotExists.visibility = View.VISIBLE
                             }
                         }
-                    } else if (result.status == Result.Status.FAILURE) {
+                        //TODO still possible to join full room
+                    } else if (result.status != Result.Status.IN_PROGRESS) {
                         binding.errFull.visibility = View.VISIBLE
                     }
                 }
@@ -96,7 +99,8 @@ class MultiPlayer : Fragment() {
                             if (it.status == Result.Status.SUCCESS) {
                                 val action = MultiPlayerDirections.actionMultiPlayerToChooseWord(it.data!!.roomCode)
                                 navController.navigate(action)
-                            } else if (result.status == Result.Status.FAILURE) {
+                            } else if (result.status != Result.Status.IN_PROGRESS) {
+                                //TODO clear error after time
                                 binding.errExists.visibility = View.VISIBLE
                             }
                         }
