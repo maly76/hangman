@@ -43,9 +43,9 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
         competitionsObserver.value = Result.inProgress()
         competitionsRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                parseCompetitions(task.result).observe(owner, { competitions ->
+                parseCompetitions(task.result).observe(owner) { competitions ->
                     competitionsObserver.value = Result.success(competitions)
-                })
+                }
             } else {
                 competitionObserver.value = Result.failure(task.exception!!.message!!)
             }
@@ -62,9 +62,9 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
         competitionRegistration = competitionsRef.document(id).addSnapshotListener { snapshot, e ->
             if (snapshot != null && snapshot.exists()) {
                 val data = snapshot.toObject<CompetitionSnapshot>()
-                parseCompetition(data!!).observe(owner, { comp ->
+                parseCompetition(data!!).observe(owner) { comp ->
                     competitionObserver.value = Result.success(comp)
-                })
+                }
             } else {
                 competitionObserver.value = Result.failure("competition does not exist")
             }
@@ -112,13 +112,13 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
         val compts = mutableListOf<Competition>()
         snapshots.forEachIndexed() { index, doc ->
             val data = doc.toObject<CompetitionSnapshot>()
-            parseCompetition(data).observe(owner, { comp ->
+            parseCompetition(data).observe(owner) { comp ->
                 compts.add(comp)
                 if (index == snapshots.size() - 1) {
                     compts.removeIf { competition -> competition.roomCode == "baseline" }
                     observer.value = compts
                 }
-            })
+            }
         }
 
         return observer
@@ -139,9 +139,9 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
             .addOnCompleteListener() { task ->
                 if (task.isSuccessful && task.result.exists()) {
                     val data = task.result.toObject<CompetitionSnapshot>()
-                    parseCompetition(data!!).observe(owner, { comp ->
+                    parseCompetition(data!!).observe(owner) { comp ->
                         observer.value = Result.success(comp)
-                    })
+                    }
                 } else {
                     observer.value = Result.failure("competition does not exist")
                 }
