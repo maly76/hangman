@@ -19,6 +19,7 @@ import java.io.Serializable
 class CompetitionDAO(private val owner: LifecycleOwner) {
     private val competitionsRef: CollectionReference = Firebase.firestore.collection(TAG)
     private lateinit var competitionRegistration: ListenerRegistration
+    private lateinit var competitionsRegistration: ListenerRegistration
 
     private val competitionObserver = MutableLiveData<Result<Competition>>()
 
@@ -167,6 +168,21 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
             }
     }
 
+    fun notifyIfRoomDeleted(roomId: String): MutableLiveData<Boolean> {
+        val observer = MutableLiveData<Boolean>()
+
+        competitionsRegistration = competitionsRef.addSnapshotListener { snapshot, e ->
+            if (snapshot != null) {
+                val data = snapshot.documents.filter { doc -> doc.id == roomId }
+                if (data.isEmpty()) {
+                    observer.value = true
+                }
+            }
+        }
+
+        return observer
+    }
+
     /**
      * add competition to the database
      * @param competition is the specified competition which will be added to the database
@@ -274,6 +290,7 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
      * */
     fun unsubscripeCompetition() {
         competitionRegistration.remove()
+        competitionsRegistration.remove()
     }
 
     companion object {

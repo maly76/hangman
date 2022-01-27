@@ -2,6 +2,7 @@ package thm.ap.hangman.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,6 +88,14 @@ class ChooseWord : Fragment() {
     }
 
     private fun subscribeCompForChanges(roomId: String) {
+        competitionDAO.notifyIfRoomDeleted(roomId).observe(viewLifecycleOwner) {
+            if (it) {
+                val navController = findNavController()
+                val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                navController.navigate(action)
+            }
+        }
+
         competitionDAO.subscribeCompetition(roomId).observe(viewLifecycleOwner) {
             if (it.status == Result.Status.SUCCESS) {
                 val c = it.data!!
@@ -129,9 +138,6 @@ class ChooseWord : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
 
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
