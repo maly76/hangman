@@ -87,5 +87,9 @@
         <argument
             android:name="GameResult"
             app:argType="thm.ap.hangman.fragments.PlayingField$GameResult" />
+        <action
+            android:id="@+id/action_result_to_singlePlayer"
+            app:destination="@id/singlePlayer"
+            app:popUpTo="@id/singlePlayer" />
     </fragment>
 </navigation>
