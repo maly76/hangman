@@ -42,9 +42,13 @@ data class Statistic(
          * calculate the rate
          * */
         fun getWinLosRate(): Double =
-            if (wins == 0) 0.0 else if (losses == 0) 100.0 else ((wins + 0.5 * (ties)) / getNumebrOfPlayedGames() * 100).roundTo(
-                2
-            )
+            when {
+                wins == 0 -> 0.0
+                losses == 0 -> 100.0
+                else -> ((wins + 0.5 * (ties)) / getNumebrOfPlayedGames() * 100).roundTo(
+                    2
+                )
+            }
 
         fun Double.roundTo(numFractionDigits: Int): Double {
             val factor = 10.0.pow(numFractionDigits.toDouble())

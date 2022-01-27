@@ -46,7 +46,7 @@ class Profile : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         var player = playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
 
-        player.observe(this, {
+        player.observe(viewLifecycleOwner) {
             if (it.data != null) {
                 binding.name.text = it.data.userName
 
@@ -72,7 +72,7 @@ class Profile : Fragment() {
                     binding.streakMp.text = "Longest winstreak: ${mpStats.winstreak}"
                 }
             }
-        })
+        }
         return binding.root
     }
 

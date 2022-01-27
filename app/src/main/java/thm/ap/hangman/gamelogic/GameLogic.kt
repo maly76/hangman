@@ -13,7 +13,7 @@ class GameLogic {
         generateHiddenWord()
     }
 
-    private val letters = List<Letter>(29) {
+    private val letters = List(29) {
         var c = 'A'
         when (it) {
             26 -> c = 'Ä'

@@ -1,7 +1,5 @@
 package thm.ap.hangman.fragments
 
-import android.annotation.SuppressLint
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +7,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentChooseWordBinding
-import thm.ap.hangman.databinding.FragmentMultiPlayerBinding
 import thm.ap.hangman.gamelogic.GameLogic
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
@@ -63,45 +58,53 @@ class ChooseWord : Fragment() {
                     if (result.status == Result.Status.SUCCESS) {
                         val comp = result.data!!
                         binding.room.text = "Room code: ${comp.roomCode}"
-                        if(AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
+                        if (AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
                             /** HOST */
                             isHost = true
                             if (comp.guest != null) {
                                 val hiddenword = comp.guestInfos.hiddenWord
                                 if (hiddenword != null) {
-                                    binding.hiddenWord.text = GameLogic.generateHiddenWord(hiddenword)
+                                    binding.hiddenWord.text =
+                                        GameLogic.generateHiddenWord(hiddenword)
                                 }
                                 binding.oponent.text = comp.guest!!.userName
                                 setVisible(true)
                             } else {
                                 binding.indeterminateBar.visibility = View.VISIBLE
                                 binding.oponent.text = "Waiting for an openent"
-                                competitionDAO.subscribeCompetition(roomId).observe(viewLifecycleOwner) {
-                                    if (it.status == Result.Status.SUCCESS) {
-                                        val c = it.data!!
-                                        if (isHost && c.hostInfos.hiddenWord != null) {
-                                            binding.hiddenWord.text = GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
-                                        } else if (!isHost && c.guestInfos.hiddenWord != null){
-                                            binding.hiddenWord.text = GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
-                                        }
-                                        if (c.guest != null && !guestFound) {
-                                            guestFound = true
-                                            val hiddenword = c.guestInfos.hiddenWord
-                                            if (hiddenword != null) {
-                                                binding.hiddenWord.text = GameLogic.generateHiddenWord(hiddenword)
+                                competitionDAO.subscribeCompetition(roomId)
+                                    .observe(viewLifecycleOwner) {
+                                        if (it.status == Result.Status.SUCCESS) {
+                                            val c = it.data!!
+                                            if (isHost && c.hostInfos.hiddenWord != null) {
+                                                binding.hiddenWord.text =
+                                                    GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
+                                            } else if (!isHost && c.guestInfos.hiddenWord != null) {
+                                                binding.hiddenWord.text =
+                                                    GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
                                             }
-                                            binding.oponent.text = c.guest!!.userName
-                                            binding.indeterminateBar.visibility = View.GONE
-                                            setVisible(true)
-                                        }
+                                            if (c.guest != null && !guestFound) {
+                                                guestFound = true
+                                                val hiddenword = c.guestInfos.hiddenWord
+                                                if (hiddenword != null) {
+                                                    binding.hiddenWord.text =
+                                                        GameLogic.generateHiddenWord(hiddenword)
+                                                }
+                                                binding.oponent.text = c.guest!!.userName
+                                                binding.indeterminateBar.visibility = View.GONE
+                                                setVisible(true)
+                                            }
 
-                                        if (c.guest != null && c.hostInfos.status == Player.Status.READY && c.guestInfos.status == Player.Status.READY) {
-                                            val navController = findNavController()
-                                            val action = ChooseWordDirections.actionChooseWordToPlayingField(roomID!!)
-                                            navController.navigate(action)
+                                            if (c.guest != null && c.hostInfos.status == Player.Status.READY && c.guestInfos.status == Player.Status.READY) {
+                                                val navController = findNavController()
+                                                val action =
+                                                    ChooseWordDirections.actionChooseWordToPlayingField(
+                                                        roomID!!
+                                                    )
+                                                navController.navigate(action)
+                                            }
                                         }
                                     }
-                                }
                             }
                         } else {
                             /** GUEST */

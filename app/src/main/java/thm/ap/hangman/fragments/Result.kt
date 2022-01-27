@@ -38,7 +38,7 @@ class Result : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
 
         if (arguments != null) {

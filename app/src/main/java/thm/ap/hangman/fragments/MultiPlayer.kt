@@ -1,7 +1,6 @@
 package thm.ap.hangman.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +47,7 @@ class MultiPlayer : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMultiPlayerBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
@@ -64,21 +63,25 @@ class MultiPlayer : Fragment() {
             playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
                 .observe(viewLifecycleOwner) { result ->
                     if (result.status == Result.Status.SUCCESS) {
-                        competitionDAO.getCompetitionByID(binding.roomCode.text.toString()).observe(viewLifecycleOwner) { comp ->
-                            if (comp.status == Result.Status.SUCCESS) {
-                                comp.data!!.guest = result.data
-                                competitionDAO.updateCompetition(comp.data).observe(viewLifecycleOwner) { r ->
-                                    if (r.status == Result.Status.SUCCESS) {
-                                        val action =
-                                            MultiPlayerDirections.actionMultiPlayerToChooseWord(comp.data.roomCode)
-                                        navController.navigate(action)
-                                    }
+                        competitionDAO.getCompetitionByID(binding.roomCode.text.toString())
+                            .observe(viewLifecycleOwner) { comp ->
+                                if (comp.status == Result.Status.SUCCESS) {
+                                    comp.data!!.guest = result.data
+                                    competitionDAO.updateCompetition(comp.data)
+                                        .observe(viewLifecycleOwner) { r ->
+                                            if (r.status == Result.Status.SUCCESS) {
+                                                val action =
+                                                    MultiPlayerDirections.actionMultiPlayerToChooseWord(
+                                                        comp.data.roomCode
+                                                    )
+                                                navController.navigate(action)
+                                            }
+                                        }
+                                } else if (result.status != Result.Status.IN_PROGRESS) {
+                                    //TODO clear error after time
+                                    binding.errNotExists.visibility = View.VISIBLE
                                 }
-                            } else if (result.status != Result.Status.IN_PROGRESS) {
-                                //TODO clear error after time
-                                binding.errNotExists.visibility = View.VISIBLE
                             }
-                        }
                         //TODO still possible to join full room
                     } else if (result.status != Result.Status.IN_PROGRESS) {
                         binding.errFull.visibility = View.VISIBLE
@@ -97,7 +100,8 @@ class MultiPlayer : Fragment() {
                             )
                         ).observe(viewLifecycleOwner) {
                             if (it.status == Result.Status.SUCCESS) {
-                                val action = MultiPlayerDirections.actionMultiPlayerToChooseWord(it.data!!.roomCode)
+                                val action =
+                                    MultiPlayerDirections.actionMultiPlayerToChooseWord(it.data!!.roomCode)
                                 navController.navigate(action)
                             } else if (result.status != Result.Status.IN_PROGRESS) {
                                 //TODO clear error after time
