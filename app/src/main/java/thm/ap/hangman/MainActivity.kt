@@ -1,8 +1,12 @@
 package thm.ap.hangman
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.auth.api.Auth
@@ -31,8 +35,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        authService.authenticate()
+        if (checkConnectivity()) {
+            authService.authenticate()
+        } else {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.no_internet)
+                .setMessage(R.string.no_internet_msg)
+                .setPositiveButton(R.string.exit) { _,_ ->
+                    finish()
+                }
+                .show()
+        }
+    }
+
+    private fun checkConnectivity(): Boolean {
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities = cm.activeNetwork ?: return false
+        val activeNetwork = cm.getNetworkCapabilities(networkCapabilities) ?: return false
+        return when{
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)     -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            else                                                               -> false
+        }
     }
 
     fun startSignInIntent() {
