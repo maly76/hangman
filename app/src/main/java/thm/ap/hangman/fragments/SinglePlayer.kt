@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.*
@@ -76,18 +77,14 @@ class SinglePlayer : Fragment() {
         ).build()
         customCategoriesAdapter.setTracker(tracker)
 
-        tracker?.addObserver(object: SelectionTracker.SelectionObserver<Long>() {
-            override fun onSelectionChanged() {
-                //handle the selected according to your logic
-            }
-        })
-
         tracker?.addObserver(
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     dataSetSelected = tracker?.selection!!.map {
                         customCategoriesAdapter.dataSet[it.toInt()]
                     }.toList()
+                    binding.buttonChoose.isEnabled = dataSetSelected.isNotEmpty()
+
                 }
             })
 
@@ -101,10 +98,6 @@ class SinglePlayer : Fragment() {
                 customCategoriesAdapter.dataSet = dataSet
                 customCategoriesAdapter.notifyDataSetChanged()
             }
-
-
-
-
         return view
     }
 
