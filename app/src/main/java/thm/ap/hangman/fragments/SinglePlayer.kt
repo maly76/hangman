@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.adapters.CustomCategoriesAdapter
 import thm.ap.hangman.databinding.FragmentSinglePlayerBinding
 
@@ -31,9 +35,13 @@ class SinglePlayer : Fragment() {
     private var _binding: FragmentSinglePlayerBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var db: FirebaseFirestore
+    lateinit var querySnapshot: QuerySnapshot
+
     var tracker: SelectionTracker<Long>? = null
     lateinit var customCategoriesAdapter: CustomCategoriesAdapter
 
+    var dataSet: MutableList<String> = mutableListOf()
     lateinit var dataSetSelected: List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +60,8 @@ class SinglePlayer : Fragment() {
         _binding = FragmentSinglePlayerBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        var dataSet: Array<String> = arrayOf("one", "two", "three", "four")
+        db = Firebase.firestore
+
         customCategoriesAdapter = CustomCategoriesAdapter(dataSet)
         binding.recyclerviewCategories.adapter = customCategoriesAdapter
 
@@ -79,9 +88,22 @@ class SinglePlayer : Fragment() {
                     dataSetSelected = tracker?.selection!!.map {
                         customCategoriesAdapter.dataSet[it.toInt()]
                     }.toList()
-                    Log.e("test", dataSetSelected.toString()) //list of selected dataSet elements
                 }
             })
+
+        db.collection("categories")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    querySnapshot = result
+                    dataSet.add(document.id)
+                }
+                customCategoriesAdapter.dataSet = dataSet
+                customCategoriesAdapter.notifyDataSetChanged()
+            }
+
+
+
 
         return view
     }
@@ -92,8 +114,17 @@ class SinglePlayer : Fragment() {
         val navController = findNavController()
 
         binding.buttonChoose.setOnClickListener {
-            val action = SinglePlayerDirections.actionSinglePlayerToPlayingField("singlePlayer")
-            navController.navigate(action)//pass useful data
+            var listOfSelectedWords = mutableListOf<String>()
+            for (document in querySnapshot) {
+                if(dataSetSelected.contains(document.id)){
+                    listOfSelectedWords.addAll(document.get("words") as List<String>)
+                }
+            }
+
+            val randomWord = listOfSelectedWords.random().trim()
+            Log.e("test", randomWord)
+            val action = SinglePlayerDirections.actionSinglePlayerToPlayingField("word-$randomWord")
+            navController.navigate(action)
         }
     }
 

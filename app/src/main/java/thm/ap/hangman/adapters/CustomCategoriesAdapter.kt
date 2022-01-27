@@ -9,10 +9,10 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import thm.ap.hangman.R
 
-class CustomCategoriesAdapter (dataSet: Array<String>) :
+class CustomCategoriesAdapter(dataSet: MutableList<String>) :
     RecyclerView.Adapter<CustomCategoriesAdapter.ViewHolder>() {
 
-    val dataSet = dataSet
+    var dataSet = dataSet
     private var tracker: SelectionTracker<Long>? = null
 
     fun setTracker(tracker: SelectionTracker<Long>?) {
@@ -62,6 +62,8 @@ class CustomCategoriesAdapter (dataSet: Array<String>) :
         }
 
     }
+
+
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
