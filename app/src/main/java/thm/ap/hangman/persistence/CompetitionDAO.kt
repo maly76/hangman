@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Competition
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
+import thm.ap.hangman.models.Statistic
 import thm.ap.hangman.service.AuthenticationService
 import java.io.Serializable
 
@@ -166,6 +167,41 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
                     }
                 }
             }
+    }
+
+    fun updateStatus(roomId: String, status: Player.Status): MutableLiveData<Result<Competition>> {
+        val observer = MutableLiveData<Result<Competition>>()
+
+        observer.value = Result.inProgress()
+        competitionsRef.document(roomId).get()
+            .addOnCompleteListener() { task ->
+                if (task.isSuccessful && task.result.exists()) {
+                    var success = false
+                    val comp = task.result.toObject<CompetitionSnapshot>()!!
+                    val playerID = AuthenticationService.getCurrentUser()!!.uid
+
+                    if (comp.hostRef!!.id == playerID) {
+                        comp.hostInfos!!.status = status
+                        success = true
+                    } else if (comp.guestRef != null && comp.guestRef!!.id == playerID) {
+                        comp.guestInfos!!.status = status
+                        success = true
+                    } else {
+                        observer.value = Result.failure("Player does not exist in this room")
+                    }
+                    if (success) {
+                        competitionsRef.document(roomId).set(comp).addOnSuccessListener {
+                            parseCompetition(comp).observe(owner) { competition ->
+                                observer.value = Result.success(competition)
+                            }
+                        }
+                    }
+                } else {
+                    observer.value = Result.failure("competition does not exist")
+                }
+            }
+
+        return observer
     }
 
     fun notifyIfRoomDeleted(roomId: String): MutableLiveData<Boolean> {
