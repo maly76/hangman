@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentResultBinding
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
 import thm.ap.hangman.persistence.CompetitionDAO
 import thm.ap.hangman.persistence.PlayerDAO
+import thm.ap.hangman.service.AchievementService
 import thm.ap.hangman.service.AuthenticationService
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,10 +37,12 @@ class Result : Fragment() {
     private val binding get() = _binding!!
 
     private var isMultiplayer = false
+    private lateinit var playerDAO: PlayerDAO
 
     private var competitionDAO = CompetitionDAO(this)
 
     private lateinit var gameResult: PlayingField.GameResult
+    private lateinit var achievementService: AchievementService
 
     private var won: Int = 0
 
@@ -57,6 +61,8 @@ class Result : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
+        achievementService = AchievementService.of(requireActivity())
+        playerDAO = PlayerDAO()
 
         if (arguments != null) {
             gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
@@ -132,8 +138,55 @@ class Result : Fragment() {
         return view
     }
 
+    fun checkAchievements(gameResult: PlayingField.GameResult, player: Player) {
+        isMultiplayer = true
+        /** Win your first game */
+        if ((player.statistic!!.spStats.getGeneralRate().wins == 1 && player.statistic!!.mpStats.getGeneralRate().wins == 0) ||
+            (player.statistic!!.mpStats.getGeneralRate().wins == 1 && player.statistic!!.spStats.getGeneralRate().wins == 0)) {
+            achievementService.unlockAchievement(getString(R.string.win_a_game))
+        }
+
+        /** Win Multi-Player games */
+        val numberOfWonMultGames = player.statistic!!.mpStats.getGeneralRate().wins
+        if (numberOfWonMultGames != 0 && numberOfWonMultGames % 5 == 0) {
+            if (numberOfWonMultGames == 5) {
+                achievementService.unlockAchievement(getString(R.string.win_mult_player_game))
+            } else {
+                achievementService.incrementAchievement(getString(R.string.win_mult_player_game), 5)
+            }
+        }
+
+        /** Win Single-Player games */
+        val numberOfWonSingleGames = player.statistic!!.spStats.getGeneralRate().wins
+        if (numberOfWonSingleGames != 0 && numberOfWonSingleGames % 5 == 0) {
+            if (numberOfWonSingleGames == 5) {
+                achievementService.unlockAchievement(getString(R.string.win_single_player_game))
+            } else {
+                achievementService.incrementAchievement(getString(R.string.win_single_player_game), 5)
+            }
+        }
+
+        /** win a game without drawing a line in single player */
+        if (!isMultiplayer) {
+            if (won == 1 && gameResult.tries == 0) {
+                achievementService.unlockAchievement(getString(R.string.win_game_without_lines_single))
+            }
+        }
+
+        /** win a game without drawing a line in multi player */
+        if (isMultiplayer) {
+            if (won == 1 && gameResult.tries == 0) {
+                achievementService.unlockAchievement(getString(R.string.win_game_without_lines_multi))
+            }
+        }
+
+        /** Guess a word with the length of at least 10 characters */
+        if (won == 1 && gameResult.word.length >= 10) {
+            achievementService.unlockAchievement(getString(R.string.win_game_with_10_characters))
+        }
+    }
+
     private fun updateStats(gameResult: PlayingField.GameResult) {
-        val playerDAO = PlayerDAO()
         playerDAO.getPlayerByID(AuthenticationService.getCurrentUser()!!.uid)
             .observe(viewLifecycleOwner) { result ->
                 if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
@@ -142,7 +195,11 @@ class Result : Fragment() {
                         if (isMultiplayer) player.statistic!!.mpStats else player.statistic!!.spStats,
                         gameResult
                     )
-                    playerDAO.updatePlayer(player)
+                    playerDAO.updatePlayer(player).observe(viewLifecycleOwner) { result ->
+                        if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
+                            checkAchievements(gameResult, result.data!!)
+                        }
+                    }
                 }
             }
     }

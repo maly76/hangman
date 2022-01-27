@@ -2,6 +2,7 @@ package thm.ap.hangman.service
 
 import android.content.Context
 import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.android.gms.tasks.Task
@@ -10,7 +11,7 @@ import com.google.android.gms.tasks.Task
  * AchievementService
  * managing the achievements from in google plays
  * */
-class AchievementService private constructor(val context: Context) {
+class AchievementService private constructor(val context: FragmentActivity) {
 
     /**
      * call the achievements of a player
@@ -43,7 +44,7 @@ class AchievementService private constructor(val context: Context) {
     companion object {
         const val RC_ACHIEVEMENT_UI = 9003
 
-        fun of(context: Context): AchievementService {
+        fun of(context: FragmentActivity): AchievementService {
             return AchievementService(context)
         }
     }
