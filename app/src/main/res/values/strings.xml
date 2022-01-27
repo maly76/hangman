@@ -21,7 +21,7 @@
     <string name="win_a_game">CgkIwK2W98cBEAIQAw</string>
     <string name="win_mult_player_game">CgkIwK2W98cBEAIQBg</string>
     <string name="win_single_player_game">CgkIwK2W98cBEAIQBw</string>
-    <string name="win_game_without_lines_multi">CgkIwK2W98cBEAIQCA</string>
-    <string name="win_game_without_lines_single">CgkIwK2W98cBEAIQCQ</string>
+    <string name="win_game_without_lines_multi">CgkIwK2W98cBEAIQCQ</string>
+    <string name="win_game_without_lines_single">CgkIwK2W98cBEAIQCA</string>
     <string name="win_game_with_10_characters">CgkIwK2W98cBEAIQCg</string>
 </resources>
