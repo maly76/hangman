@@ -163,7 +163,7 @@ class PlayingField : Fragment() {
     private fun gameWon() {
         val navController = findNavController()
         val gameResult =
-            GameResult(GameResult.Status.WON, gameLogic.getGuessingWord(), gameLogic.getTries())
+            GameResult(GameResult.Status.WON, gameLogic.getGuessingWord(), gameLogic.getTries(), true)
         val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
@@ -171,7 +171,7 @@ class PlayingField : Fragment() {
     private fun gameLost() {
         val navController = findNavController()
         val gameResult =
-            GameResult(GameResult.Status.LOST, gameLogic.getGuessingWord(), gameLogic.getTries())
+            GameResult(GameResult.Status.LOST, gameLogic.getGuessingWord(), gameLogic.getTries(), false)
         val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
@@ -209,7 +209,7 @@ class PlayingField : Fragment() {
     }
 
     @Keep
-    class GameResult(val status: Status, val word: String, val tries: Int) : Serializable {
+    class GameResult(val status: Status, val word: String, val tries: Int, val success: Boolean) : Serializable {
         enum class Status {
             WON,
             LOST,

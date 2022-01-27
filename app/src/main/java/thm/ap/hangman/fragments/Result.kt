@@ -65,7 +65,13 @@ class Result : Fragment() {
                 binding.result.visibility = View.GONE
             }
 
-            binding.tries.text = "You took ${gameResult.tries} out of 11 tries"
+            if (gameResult.success) {
+                binding.successful.text = "You guessed the word successfully!"
+            } else {
+                binding.successful.text = "You did not guess the word!"
+            }
+
+            binding.tries.text = "You took ${gameResult.tries+1} out of 12 tries"
 
             binding.guessWord.text = "The word was: ${gameResult.word}"
         }
@@ -77,16 +83,23 @@ class Result : Fragment() {
     private fun updateStats(gameResult: PlayingField.GameResult) {
         val playerDAO = PlayerDAO()
         val isMultiplayer = true
-        playerDAO.getPlayerByID(AuthenticationService.getCurrentUser()!!.uid).observe(this) { result ->
-            if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
-                val player = result.data!!
-                updateObject(if (isMultiplayer) player.statistic!!.mpStats else player.statistic!!.spStats, gameResult)
-                playerDAO.updatePlayer(player)
+        playerDAO.getPlayerByID(AuthenticationService.getCurrentUser()!!.uid)
+            .observe(this) { result ->
+                if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
+                    val player = result.data!!
+                    updateObject(
+                        if (isMultiplayer) player.statistic!!.mpStats else player.statistic!!.spStats,
+                        gameResult
+                    )
+                    playerDAO.updatePlayer(player)
+                }
             }
-        }
     }
 
-    private fun updateObject(stats: Statistic.Stats, gameResult: PlayingField.GameResult): Statistic.Stats {
+    private fun updateObject(
+        stats: Statistic.Stats,
+        gameResult: PlayingField.GameResult
+    ): Statistic.Stats {
         val categoryID = "CSPifMcrWbVK54Oke6EK"         // should be given
         // check if a rate for this category already exists
         val rates = stats.rates.filter { rate -> rate.categoryID == categoryID }
