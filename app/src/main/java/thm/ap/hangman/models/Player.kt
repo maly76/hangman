@@ -44,6 +44,7 @@ data class Player(
         LOSED,
         PLAYING,
         OFFLINE,
-        READY
+        READY,
+        AGAIN
     }
 }

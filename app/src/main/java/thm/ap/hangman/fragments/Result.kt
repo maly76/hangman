@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.databinding.FragmentResultBinding
+import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
+import thm.ap.hangman.persistence.CompetitionDAO
 import thm.ap.hangman.persistence.PlayerDAO
 import thm.ap.hangman.service.AuthenticationService
 
@@ -31,6 +33,10 @@ class Result : Fragment() {
 
     private var isMultiplayer = false
 
+    private var competitionDAO = CompetitionDAO(this)
+
+    private lateinit var gameResult: PlayingField.GameResult
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -47,9 +53,10 @@ class Result : Fragment() {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
 
         if (arguments != null) {
-            val gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
+            gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
             updateStats(gameResult)
             if (isMultiplayer) {
+                //TODO get oponent name from db
                 val oponentUsername = "testuser"
 
                 if (gameResult.status == PlayingField.GameResult.Status.WON) {
@@ -71,7 +78,7 @@ class Result : Fragment() {
                 binding.successful.text = "You did not guess the word!"
             }
 
-            binding.tries.text = "You took ${gameResult.tries+1} out of 12 tries"
+            binding.tries.text = "You took ${gameResult.tries + 1} out of 12 tries"
 
             binding.guessWord.text = "The word was: ${gameResult.word}"
         }
@@ -143,16 +150,53 @@ class Result : Fragment() {
         val navController = findNavController()
 
         binding.buttonMainMenu.setOnClickListener {
-            //TODO ifMultiplayer delete Competition after pressing main menu button
+            competitionDAO.getCompetitionByID(gameResult.roomId)
+                .observe(viewLifecycleOwner) { comp ->
+                    if (AuthenticationService.getCurrentUser()!!.uid == comp.data!!.host.id) {
+                        /* Host */
+                        competitionDAO.deleteCompetition(gameResult.roomId)
+                    } else {
+                        /* Guest */
+                        comp.data.guestInfos.wortToGuess = null
+                        comp.data.guestInfos.hiddenWord = null
+                        comp.data.guestInfos.status = Player.Status.OFFLINE
+                        comp.data.guest = null
+                    }
+
+                }
             val action = ResultDirections.actionResultToMainMenu()
             navController.navigate(action)
         }
 
         binding.buttonPlayAgain.setOnClickListener {
-            //TODO if Multiplayer, make player ready and delete the old word
-//            val action = ResultDirections.actionResultToChooseWord()
-//            navController.navigate(action)
-            //TODO if Singleplayer, go back to category selection
+            if (isMultiplayer) {
+                competitionDAO.getCompetitionByID(gameResult.roomId)
+                    .observe(viewLifecycleOwner) { comp ->
+                        if (comp.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
+                            comp.data.let {
+                                if (it!!.guestInfos.status == Player.Status.AGAIN && it.hostInfos.status == Player.Status.AGAIN) {
+                                    val action = ResultDirections.actionResultToChooseWord(gameResult.roomId)
+                                    navController.navigate(action)
+                                }
+                                if (AuthenticationService.getCurrentUser()!!.uid == it.host.id) {
+                                    /* Host */
+                                    it.guestInfos.wortToGuess = null
+                                    it.guestInfos.hiddenWord = null
+                                    it.hostInfos.status = Player.Status.AGAIN
+                                } else {
+                                    /* Guest */
+                                    it.hostInfos.wortToGuess = null
+                                    it.hostInfos.hiddenWord = null
+                                    it.guestInfos.status = Player.Status.AGAIN
+                                }
+                            }
+                        }
+                    }
+            } else {
+                //TODO if Singleplayer, go back to category selection
+//                val action = ResultDirections.actionResultToCategory()
+//                navController.navigate(action)
+            }
         }
     }
 
