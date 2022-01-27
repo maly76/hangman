@@ -65,6 +65,7 @@ class PlayingField : Fragment() {
 
         if (arguments != null) {
             roomId = requireArguments().getString("roomId").toString()
+            // TODO single player: word-{randomWord} <- extract word
             if (roomId == "singlePlayer") {
                 isMultiPlayer = false
             } else {
