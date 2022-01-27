@@ -1,6 +1,5 @@
 package thm.ap.hangman.fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,13 +8,11 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentResultBinding
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
 import thm.ap.hangman.persistence.CompetitionDAO
 import thm.ap.hangman.persistence.PlayerDAO
-import thm.ap.hangman.service.AchievementService
 import thm.ap.hangman.service.AuthenticationService
 
 // TODO: Rename parameter arguments, choose names that match
@@ -37,14 +34,10 @@ class Result : Fragment() {
     private val binding get() = _binding!!
 
     private var isMultiplayer = false
-    private lateinit var playerDAO: PlayerDAO
 
     private var competitionDAO = CompetitionDAO(this)
 
     private lateinit var gameResult: PlayingField.GameResult
-    private lateinit var achievementService: AchievementService
-
-    private var won: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,70 +47,28 @@ class Result : Fragment() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
-        achievementService = AchievementService.of(requireActivity())
-        playerDAO = PlayerDAO()
 
         if (arguments != null) {
             gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
-            isMultiplayer = gameResult.roomId != null
             updateStats(gameResult)
             if (isMultiplayer) {
-                var opponentUsername = ""
+                //TODO get oponent name from db
+                val oponentUsername = "testuser"
 
-                competitionDAO.subscribeCompetition(gameResult.roomId!!).observe(viewLifecycleOwner) { result ->
-                    if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
-                        result.data.let { comp ->
-                            if (AuthenticationService.getCurrentUser()!!.uid == comp!!.host.id) {
-                                opponentUsername = comp.guest!!.userName!!
-                                /* Host */
-                                if (comp.guestInfos.status == Player.Status.PLAYING) {
-                                    binding.result.text = "Waiting for $opponentUsername to finish"
-                                } else {
-                                    when {
-                                        comp.hostInfos.tries > comp.guestInfos.tries -> {
-                                            binding.result.text = "You Lost against $opponentUsername!"
-                                            won = 2
-                                        }
-                                        comp.hostInfos.tries < comp.guestInfos.tries -> {
-                                            binding.result.text = "You Won against $opponentUsername!"
-                                            won = 1
-                                        }
-                                        comp.hostInfos.tries == comp.guestInfos.tries -> {
-                                            binding.result.text = "The game with $opponentUsername is tied!"
-                                            won = 3
-                                        }
-                                    }
-                                }
-                            } else {
-                                opponentUsername = comp.host!!.userName!!
-                                if (comp.guestInfos.status == Player.Status.PLAYING) {
-                                    binding.result.text = "Waiting for $opponentUsername to finish"
-                                } else {
-                                    when {
-                                        comp.guestInfos.tries > comp.hostInfos.tries -> {
-                                            binding.result.text = "You Lost against $opponentUsername!"
-                                            won = 2
-                                        }
-                                        comp.guestInfos.tries < comp.hostInfos.tries -> {
-                                            binding.result.text = "You Won against $opponentUsername!"
-                                            won = 1
-                                        }
-                                        comp.guestInfos.tries == comp.hostInfos.tries -> {
-                                            binding.result.text = "The game with $opponentUsername is tied!"
-                                            won = 3
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                if (gameResult.status == PlayingField.GameResult.Status.WON) {
+                    binding.result.text = "You Won against ${oponentUsername}!"
+                }
+                if (gameResult.status == PlayingField.GameResult.Status.LOST) {
+                    binding.result.text = "You Lost against ${oponentUsername}!"
+                }
+                if (gameResult.status == PlayingField.GameResult.Status.TIE) {
+                    binding.result.text = "The game with ${oponentUsername} is tied!"
                 }
             } else {
                 binding.result.visibility = View.GONE
@@ -138,55 +89,9 @@ class Result : Fragment() {
         return view
     }
 
-    fun checkAchievements(gameResult: PlayingField.GameResult, player: Player) {
-        isMultiplayer = true
-        /** Win your first game */
-        if ((player.statistic!!.spStats.getGeneralRate().wins == 1 && player.statistic!!.mpStats.getGeneralRate().wins == 0) ||
-            (player.statistic!!.mpStats.getGeneralRate().wins == 1 && player.statistic!!.spStats.getGeneralRate().wins == 0)) {
-            achievementService.unlockAchievement(getString(R.string.win_a_game))
-        }
-
-        /** Win Multi-Player games */
-        val numberOfWonMultGames = player.statistic!!.mpStats.getGeneralRate().wins
-        if (numberOfWonMultGames != 0 && numberOfWonMultGames % 5 == 0) {
-            if (numberOfWonMultGames == 5) {
-                achievementService.unlockAchievement(getString(R.string.win_mult_player_game))
-            } else {
-                achievementService.incrementAchievement(getString(R.string.win_mult_player_game), 5)
-            }
-        }
-
-        /** Win Single-Player games */
-        val numberOfWonSingleGames = player.statistic!!.spStats.getGeneralRate().wins
-        if (numberOfWonSingleGames != 0 && numberOfWonSingleGames % 5 == 0) {
-            if (numberOfWonSingleGames == 5) {
-                achievementService.unlockAchievement(getString(R.string.win_single_player_game))
-            } else {
-                achievementService.incrementAchievement(getString(R.string.win_single_player_game), 5)
-            }
-        }
-
-        /** win a game without drawing a line in single player */
-        if (!isMultiplayer) {
-            if (won == 1 && gameResult.tries == 0) {
-                achievementService.unlockAchievement(getString(R.string.win_game_without_lines_single))
-            }
-        }
-
-        /** win a game without drawing a line in multi player */
-        if (isMultiplayer) {
-            if (won == 1 && gameResult.tries == 0) {
-                achievementService.unlockAchievement(getString(R.string.win_game_without_lines_multi))
-            }
-        }
-
-        /** Guess a word with the length of at least 10 characters */
-        if (won == 1 && gameResult.word.length >= 10) {
-            achievementService.unlockAchievement(getString(R.string.win_game_with_10_characters))
-        }
-    }
-
     private fun updateStats(gameResult: PlayingField.GameResult) {
+        val playerDAO = PlayerDAO()
+        val isMultiplayer = true
         playerDAO.getPlayerByID(AuthenticationService.getCurrentUser()!!.uid)
             .observe(viewLifecycleOwner) { result ->
                 if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
@@ -195,11 +100,7 @@ class Result : Fragment() {
                         if (isMultiplayer) player.statistic!!.mpStats else player.statistic!!.spStats,
                         gameResult
                     )
-                    playerDAO.updatePlayer(player).observe(viewLifecycleOwner) { result ->
-                        if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
-                            checkAchievements(gameResult, result.data!!)
-                        }
-                    }
+                    playerDAO.updatePlayer(player)
                 }
             }
     }
@@ -212,8 +113,8 @@ class Result : Fragment() {
         // check if a rate for this category already exists
         val rates = stats.rates.filter { rate -> rate.categoryID == categoryID }
         val rate = if (rates.isEmpty()) Statistic.Rate.new(categoryID) else rates[0]
-        when (won) {
-            1 -> {
+        when (gameResult.status) {
+            PlayingField.GameResult.Status.WON -> {
                 rate.wins++
                 if (!stats.winStreakActive) {
                     stats.oldWinStreak = 0
@@ -228,16 +129,13 @@ class Result : Fragment() {
                     stats.longestWord = gameResult.word
                 }
             }
-            2 -> {
+            PlayingField.GameResult.Status.LOST -> {
                 rate.losses++
                 stats.winStreakActive = false
             }
-            3 -> {
+            else -> {
                 rate.ties++
                 stats.winStreakActive = false
-            }
-            else -> {
-                // won is null
             }
         }
 
@@ -264,7 +162,7 @@ class Result : Fragment() {
                         "Yes"
                     ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
                         if (isMultiplayer) {
-                            competitionDAO.exitRoom(gameResult.roomId!!)
+                            competitionDAO.exitRoom(gameResult.roomId)
                         }
                         val action = ResultDirections.actionResultToMainMenu()
                         navController.navigate(action)
@@ -280,22 +178,20 @@ class Result : Fragment() {
             })
 
         binding.buttonMainMenu.setOnClickListener {
-            if (isMultiplayer) {
-                competitionDAO.exitRoom(gameResult.roomId!!)
-            }
+            competitionDAO.exitRoom(gameResult.roomId)
             val action = ResultDirections.actionResultToMainMenu()
             navController.navigate(action)
         }
 
         binding.buttonPlayAgain.setOnClickListener {
             if (isMultiplayer) {
-                competitionDAO.getCompetitionByID(gameResult.roomId!!)
+                competitionDAO.getCompetitionByID(gameResult.roomId)
                     .observe(viewLifecycleOwner) { comp ->
                         if (comp.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
                             comp.data.let {
                                 if (it!!.guestInfos.status == Player.Status.AGAIN && it.hostInfos.status == Player.Status.AGAIN) {
                                     val action =
-                                        ResultDirections.actionResultToChooseWord(gameResult.roomId!!)
+                                        ResultDirections.actionResultToChooseWord(gameResult.roomId)
                                     navController.navigate(action)
                                 }
                                 if (AuthenticationService.getCurrentUser()!!.uid == it.host.id) {
@@ -313,7 +209,7 @@ class Result : Fragment() {
                         }
                     }
             } else {
-                val action = ResultDirections.actionResultToMainMenu()
+                val action = ResultDirections.actionResultToSinglePlayer()
                 navController.navigate(action)
             }
         }
