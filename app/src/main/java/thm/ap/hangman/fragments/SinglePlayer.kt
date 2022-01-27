@@ -77,18 +77,14 @@ class SinglePlayer : Fragment() {
         ).build()
         customCategoriesAdapter.setTracker(tracker)
 
-        tracker?.addObserver(object: SelectionTracker.SelectionObserver<Long>() {
-            override fun onSelectionChanged() {
-                //handle the selected according to your logic
-            }
-        })
-
         tracker?.addObserver(
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     dataSetSelected = tracker?.selection!!.map {
                         customCategoriesAdapter.dataSet[it.toInt()]
                     }.toList()
+                    binding.buttonChoose.isEnabled = dataSetSelected.isNotEmpty()
+
                 }
             })
 
