@@ -16,4 +16,12 @@
     <string name="no_internet">No Internet</string>
     <string name="no_internet_msg">OOPS you have no internet, please make sure you have internet access, to be able to use the app.</string>
     <string name="exit">Exit</string>
+
+    /** Achievements */
+    <string name="win_a_game">CgkIwK2W98cBEAIQAw</string>
+    <string name="win_mult_player_game">CgkIwK2W98cBEAIQBg</string>
+    <string name="win_single_player_game">CgkIwK2W98cBEAIQBw</string>
+    <string name="win_game_without_lines_multi">CgkIwK2W98cBEAIQCA</string>
+    <string name="win_game_without_lines_single">CgkIwK2W98cBEAIQCQ</string>
+    <string name="win_game_with_10_characters">CgkIwK2W98cBEAIQCg</string>
 </resources>
