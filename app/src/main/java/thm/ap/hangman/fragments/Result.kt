@@ -93,7 +93,7 @@ class Result : Fragment() {
         val playerDAO = PlayerDAO()
         val isMultiplayer = true
         playerDAO.getPlayerByID(AuthenticationService.getCurrentUser()!!.uid)
-            .observe(this) { result ->
+            .observe(viewLifecycleOwner) { result ->
                 if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
                     val player = result.data!!
                     updateObject(
@@ -164,7 +164,7 @@ class Result : Fragment() {
                         if (isMultiplayer) {
                             competitionDAO.exitRoom(gameResult.roomId)
                         }
-                        val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                        val action = ResultDirections.actionResultToMainMenu()
                         navController.navigate(action)
                     }
                     builder.setNegativeButton(

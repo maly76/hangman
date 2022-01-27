@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,8 @@ class PlayingField : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+
     }
 
     override fun onCreateView(
@@ -75,10 +78,15 @@ class PlayingField : Fragment() {
                     builder.setPositiveButton(
                         "Yes"
                     ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
-                        competitionDAO.exitRoom(roomId)
                         val navController = findNavController()
-                        val action = PlayingFieldDirections.actionPlayingFieldToMultiPlayer()
-                        navController.navigate(action)
+                        if(isMultiPlayer){
+                            competitionDAO.exitRoom(roomId)
+                            val action = PlayingFieldDirections.actionPlayingFieldToMultiPlayer()
+                            navController.navigate(action)
+                        }
+                        else{
+                            navController.popBackStack()
+                        }
                     }
                     builder.setNegativeButton(
                         "No"
@@ -93,8 +101,11 @@ class PlayingField : Fragment() {
         if (arguments != null) {
             roomId = requireArguments().getString("roomId").toString()
             // TODO single player: word-{randomWord} <- extract word
-            if (roomId == "singlePlayer") {
+            if (roomId.startsWith("word-")) {//
                 isMultiPlayer = false
+                gameLogic.setWord(roomId.drop(5))
+                Log.e("tttest", roomId.drop(5))
+                //set gamelogic word gamelogic.setword
             } else {
                 isMultiPlayer = true
                 competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
@@ -115,6 +126,15 @@ class PlayingField : Fragment() {
 
         val view = binding.root
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val callback = object : OnBackPressedCallback(true /** true means that the callback is enabled */) {
+            override fun handleOnBackPressed() {
+                Log.e("test", "teeeeeeeest")
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
