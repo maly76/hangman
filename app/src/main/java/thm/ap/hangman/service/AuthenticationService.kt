@@ -33,7 +33,8 @@ class AuthenticationService(val context: Context) {
             signInSilently()
         } else {
             currentUser.let {
-                Log.e("test", currentUser!!.uid + " " + currentUser!!.displayName)
+                Log.e("Logged in", currentUser.uid + " " + currentUser.displayName)
+                createPlayer(currentUser)
             }
         }
     }
@@ -56,7 +57,7 @@ class AuthenticationService(val context: Context) {
                         firebaseAuthWithPlayGames(signedInAccount!!)
                     } else {
                         //main.signinintent
-                        var mContext = context as MainActivity
+                        val mContext = context as MainActivity
                         mContext.startSignInIntent()
                     }
                 }
@@ -77,6 +78,7 @@ class AuthenticationService(val context: Context) {
                     user?.let {
                         Log.e(TAG, user.uid + " " + user.displayName)
                     }
+                    createPlayer(user!!)
                 } else {
                     // If sign in fails, display a message to the user.
                     (context as MainActivity).finish()
@@ -103,5 +105,11 @@ class AuthenticationService(val context: Context) {
         val playerDAO = PlayerDAO()
         val player = Player.new(user.uid, user.displayName, Statistic())
         playerDAO.addPlayer(player)
+    }
+
+    companion object {
+        fun getCurrentUser(): FirebaseUser? {
+            return Firebase.auth.currentUser
+        }
     }
 }

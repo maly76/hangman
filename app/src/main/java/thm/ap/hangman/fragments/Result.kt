@@ -42,7 +42,7 @@ class Result : Fragment() {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
 
         if (arguments != null) {
-            val gameResult = arguments!!.get("GameResult") as PlayingField.GameResult
+            val gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
 
             if (gameResult.status == PlayingField.GameResult.Status.WON) {
                 binding.result.text = "You Won!"
@@ -68,14 +68,16 @@ class Result : Fragment() {
 
         val navController = findNavController()
 
+
+        //TODO fix play again button
         binding.buttonMainMenu.setOnClickListener {
-            val action = ResultDirections.actionResultToMainMenu()
-            navController.navigate(action)
+//            val action = ResultDirections.actionResultToMainMenu()
+//            navController.navigate(action)
         }
 
         binding.buttonPlayAgain.setOnClickListener {
-            val action = ResultDirections.actionResultToChooseWord()
-            navController.navigate(action)
+//            val action = ResultDirections.actionResultToChooseWord()
+//            navController.navigate(action)
         }
     }
 

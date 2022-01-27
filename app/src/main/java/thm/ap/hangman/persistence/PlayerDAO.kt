@@ -40,7 +40,6 @@ class PlayerDAO {
                         val player = doc.toObject<Player>()
                         plrs.add(player)
                     }
-                    plrs.removeIf { player -> player.id == "baseline" }
                     playersObserver.value = Result.success(plrs)
                 } else {
                     playersObserver.value = Result.failure(task.exception!!.message!!)

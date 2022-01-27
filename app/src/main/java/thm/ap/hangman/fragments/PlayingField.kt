@@ -10,9 +10,12 @@ import android.widget.Button
 import androidx.annotation.Keep
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentPlayingFieldBinding
 import thm.ap.hangman.gamelogic.GameLogic
+import thm.ap.hangman.persistence.CompetitionDAO
 import java.io.Serializable
 
 
@@ -36,6 +39,12 @@ class PlayingField : Fragment() {
 
     private val gameLogic = GameLogic()
 
+    private val competitionDAO = CompetitionDAO(viewLifecycleOwner)
+
+    private var isMultiPlayer = false
+    private lateinit var roomId: String
+    private var isHost = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -48,11 +57,27 @@ class PlayingField : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentPlayingFieldBinding.inflate(inflater, container, false)
-        val view = binding.root
         bindButtons()
         binding.guessButton.setOnClickListener { guessWord() }
+
+        if (arguments != null) {
+            isMultiPlayer = true
+            roomId = requireArguments().getString("roomId").toString()
+            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
+                // Check if user is host or guest
+                if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
+                    isHost = false
+                } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
+                    isHost = true
+                }
+            }
+        } else {
+            isMultiPlayer = false
+        }
+
+        val view = binding.root
         return view
     }
 
@@ -60,7 +85,6 @@ class PlayingField : Fragment() {
     override fun onStart() {
         super.onStart()
         updateHiddenWord()
-        //TODO: write wordToGuess to DB
     }
 
     @SuppressLint("SetTextI18n")
@@ -91,8 +115,16 @@ class PlayingField : Fragment() {
     }
 
     private fun updateHiddenWord() {
+        if (isMultiPlayer) {
+            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
+                if (isHost) {
+                    comp.data!!.hostInfos.hiddenWord?.let { gameLogic.setWord(it) }
+                } else {
+                    comp.data!!.guestInfos.hiddenWord?.let { gameLogic.setWord(it) }
+                }
+            }
+        }
         binding.word.text = gameLogic.getHiddenWord()
-        //TODO: write hidden Word to DB; gameLogic.getHiddenWord()
     }
 
     private fun updateTries() {
@@ -110,7 +142,15 @@ class PlayingField : Fragment() {
             11 -> binding.imageView.setImageResource(R.drawable.hangman_11)
             else -> binding.imageView.setImageResource(R.drawable.hangman_11)
         }
-        //TODO: write tries to DB; gameLogic.getTries()
+        if (isMultiPlayer) {
+            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) {
+                if (isHost) {
+                    it.data!!.hostInfos.tries = gameLogic.getTries()
+                } else {
+                    it.data!!.guestInfos.tries = gameLogic.getTries()
+                }
+            }
+        }
     }
 
     private fun gameWon() {

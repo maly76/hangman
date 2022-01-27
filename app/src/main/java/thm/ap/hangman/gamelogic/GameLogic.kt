@@ -26,6 +26,7 @@ class GameLogic {
 
     fun setWord(word: String) {
         this.wordToGuess = word
+        generateHiddenWord()
     }
 
     fun getTries(): Int {
@@ -68,6 +69,10 @@ class GameLogic {
         this.hiddenWord = this.wordToGuess.replace(Regex("""[a-zA-Z'äöüÄÖÜ]"""), "_")
     }
 
+    private fun generateHiddenWord(word: String): String {
+        return word.replace(Regex("""[a-zA-Z'äöüÄÖÜ]"""), "_")
+    }
+
     private fun updateHiddenWord(c: Char) {
         //get index of chars from original
         var index: Int = this.wordToGuess.indexOf(c)
@@ -91,6 +96,14 @@ class GameLogic {
             letter.setStatus(false)
             this.tries++
             false
+        }
+    }
+
+    companion object {
+        fun generateHiddenWord(word: String): String {
+            var hidden = word.replace(Regex("""[a-zA-Z'äöüÄÖÜ]"""), "_")
+            hidden = hidden.replace("", " ").trim()
+            return hidden
         }
     }
 }

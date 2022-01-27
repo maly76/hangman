@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.ktx.auth
@@ -34,8 +33,8 @@ class MultiPlayer : Fragment() {
     private var _binding: FragmentMultiPlayerBinding? = null
     private val binding get() = _binding!!
 
-//    private val playerDAO = PlayerDAO()
-//    private val competitionDAO = CompetitionDAO(viewLifecycleOwner as AppCompatActivity)
+    private val playerDAO = PlayerDAO()
+    private val competitionDAO = CompetitionDAO(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,31 +59,53 @@ class MultiPlayer : Fragment() {
 
         val navController = findNavController()
 
+        //TODO check if room code was entered
         binding.buttonEnterRoom.setOnClickListener {
-            //TODO check failure room exists
-//            playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
-//                .observe(viewLifecycleOwner) { result ->
-//                    if (result.status == Result.Status.SUCCESS) {
-//                        competitionDAO.addCompetition(
-//                            Competition(
-//                                binding.roomCode.text.toString(),
-//                                result.data!!
-//                            )
-//                        ).observe(viewLifecycleOwner) {
-//                            if (it.status == Result.Status.SUCCESS) {
-//                                Log.e("TAG", it.data!!.toString())
-//                            }
-//                        }
-//                    }
-//                }
-
-            val action = MultiPlayerDirections.actionMultiPlayerToChooseWord()
-            navController.navigate(action)
+            playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
+                .observe(viewLifecycleOwner) { result ->
+                    if (result.status == Result.Status.SUCCESS) {
+                        competitionDAO.getCompetitionByID(binding.roomCode.text.toString()).observe(viewLifecycleOwner) { comp ->
+                            if (comp.status == Result.Status.SUCCESS) {
+                                comp.data!!.guest = result.data
+                                competitionDAO.updateCompetition(comp.data).observe(viewLifecycleOwner) { r ->
+                                    if (r.status == Result.Status.SUCCESS) {
+                                        val action =
+                                            MultiPlayerDirections.actionMultiPlayerToChooseWord(comp.data.roomCode)
+                                        navController.navigate(action)
+                                    }
+                                }
+                            } else if (result.status != Result.Status.IN_PROGRESS) {
+                                //TODO clear error after time
+                                binding.errNotExists.visibility = View.VISIBLE
+                            }
+                        }
+                        //TODO still possible to join full room
+                    } else if (result.status != Result.Status.IN_PROGRESS) {
+                        binding.errFull.visibility = View.VISIBLE
+                    }
+                }
         }
 
         binding.buttonCreateRoom.setOnClickListener {
-            val action = MultiPlayerDirections.actionMultiPlayerToChooseWord()
-            navController.navigate(action)
+            playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
+                .observe(viewLifecycleOwner) { result ->
+                    if (result.status == Result.Status.SUCCESS) {
+                        competitionDAO.addCompetition(
+                            Competition(
+                                binding.roomCode.text.toString(),
+                                result.data!!
+                            )
+                        ).observe(viewLifecycleOwner) {
+                            if (it.status == Result.Status.SUCCESS) {
+                                val action = MultiPlayerDirections.actionMultiPlayerToChooseWord(it.data!!.roomCode)
+                                navController.navigate(action)
+                            } else if (result.status != Result.Status.IN_PROGRESS) {
+                                //TODO clear error after time
+                                binding.errExists.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                }
         }
     }
 
