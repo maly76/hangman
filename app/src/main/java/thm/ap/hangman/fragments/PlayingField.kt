@@ -39,11 +39,11 @@ class PlayingField : Fragment() {
 
     private val gameLogic = GameLogic()
 
-    private val competitionDAO = CompetitionDAO(viewLifecycleOwner)
-
-    private var isMultiPlayer = false
-    private lateinit var roomId: String
-    private var isHost = false
+//    private val competitionDAO = CompetitionDAO(viewLifecycleOwner)
+//
+//    private var isMultiPlayer = false
+//    private lateinit var roomId: String
+//    private var isHost = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,20 +62,20 @@ class PlayingField : Fragment() {
         bindButtons()
         binding.guessButton.setOnClickListener { guessWord() }
 
-        if (arguments != null) {
-            isMultiPlayer = true
-            roomId = requireArguments().getString("roomId").toString()
-            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
-                // Check if user is host or guest
-                if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
-                    isHost = false
-                } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
-                    isHost = true
-                }
-            }
-        } else {
-            isMultiPlayer = false
-        }
+//        if (arguments != null) {
+//            isMultiPlayer = true
+//            roomId = requireArguments().getString("roomId").toString()
+//            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
+//                // Check if user is host or guest
+//                if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
+//                    isHost = false
+//                } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
+//                    isHost = true
+//                }
+//            }
+//        } else {
+//            isMultiPlayer = false
+//        }
 
         val view = binding.root
         return view
@@ -115,15 +115,15 @@ class PlayingField : Fragment() {
     }
 
     private fun updateHiddenWord() {
-        if (isMultiPlayer) {
-            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
-                if (isHost) {
-                    comp.data!!.hostInfos.hiddenWord?.let { gameLogic.setWord(it) }
-                } else {
-                    comp.data!!.guestInfos.hiddenWord?.let { gameLogic.setWord(it) }
-                }
-            }
-        }
+//        if (isMultiPlayer) {
+//            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
+//                if (isHost) {
+//                    comp.data!!.hostInfos.hiddenWord?.let { gameLogic.setWord(it) }
+//                } else {
+//                    comp.data!!.guestInfos.hiddenWord?.let { gameLogic.setWord(it) }
+//                }
+//            }
+//        }
         binding.word.text = gameLogic.getHiddenWord()
     }
 
@@ -142,15 +142,15 @@ class PlayingField : Fragment() {
             11 -> binding.imageView.setImageResource(R.drawable.hangman_11)
             else -> binding.imageView.setImageResource(R.drawable.hangman_11)
         }
-        if (isMultiPlayer) {
-            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) {
-                if (isHost) {
-                    it.data!!.hostInfos.tries = gameLogic.getTries()
-                } else {
-                    it.data!!.guestInfos.tries = gameLogic.getTries()
-                }
-            }
-        }
+//        if (isMultiPlayer) {
+//            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) {
+//                if (isHost) {
+//                    it.data!!.hostInfos.tries = gameLogic.getTries()
+//                } else {
+//                    it.data!!.guestInfos.tries = gameLogic.getTries()
+//                }
+//            }
+//        }
     }
 
     private fun gameWon() {
