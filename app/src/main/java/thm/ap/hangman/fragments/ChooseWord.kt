@@ -130,9 +130,6 @@ class ChooseWord : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-
         activity?.onBackPressedDispatcher?.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {

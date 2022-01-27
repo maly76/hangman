@@ -1,9 +1,11 @@
 package thm.ap.hangman.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.databinding.FragmentResultBinding
@@ -149,6 +151,32 @@ class Result : Fragment() {
 
         val navController = findNavController()
 
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
+                    builder.setCancelable(false)
+                    builder.setMessage("Do you want to go back to the main menu?")
+                    builder.setPositiveButton(
+                        "Yes"
+                    ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
+                        if (isMultiplayer) {
+                            competitionDAO.exitRoom(gameResult.roomId)
+                        }
+                        val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                        navController.navigate(action)
+                    }
+                    builder.setNegativeButton(
+                        "No"
+                    ) { dialog, _ -> //if user select "No", just cancel this dialog and continue with app
+                        dialog.cancel()
+                    }
+                    val alert: AlertDialog = builder.create()
+                    alert.show()
+                }
+            })
+
         binding.buttonMainMenu.setOnClickListener {
             competitionDAO.exitRoom(gameResult.roomId)
             val action = ResultDirections.actionResultToMainMenu()
@@ -162,7 +190,8 @@ class Result : Fragment() {
                         if (comp.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
                             comp.data.let {
                                 if (it!!.guestInfos.status == Player.Status.AGAIN && it.hostInfos.status == Player.Status.AGAIN) {
-                                    val action = ResultDirections.actionResultToChooseWord(gameResult.roomId)
+                                    val action =
+                                        ResultDirections.actionResultToChooseWord(gameResult.roomId)
                                     navController.navigate(action)
                                 }
                                 if (AuthenticationService.getCurrentUser()!!.uid == it.host.id) {
