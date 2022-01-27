@@ -26,6 +26,8 @@ class Result : Fragment() {
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
 
+    private var isMultiplayer = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -44,14 +46,20 @@ class Result : Fragment() {
         if (arguments != null) {
             val gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
 
-            if (gameResult.status == PlayingField.GameResult.Status.WON) {
-                binding.result.text = "You Won!"
-            }
-            if (gameResult.status == PlayingField.GameResult.Status.LOST) {
-                binding.result.text = "You Lost!"
-            }
-            if (gameResult.status == PlayingField.GameResult.Status.TIE) {
-                binding.result.text = "The game is tied!"
+            if (isMultiplayer) {
+                val oponentUsername = "testuser"
+
+                if (gameResult.status == PlayingField.GameResult.Status.WON) {
+                    binding.result.text = "You Won against ${oponentUsername}!"
+                }
+                if (gameResult.status == PlayingField.GameResult.Status.LOST) {
+                    binding.result.text = "You Lost against ${oponentUsername}!"
+                }
+                if (gameResult.status == PlayingField.GameResult.Status.TIE) {
+                    binding.result.text = "The game with ${oponentUsername} is tied!"
+                }
+            } else {
+                binding.result.visibility = View.GONE
             }
 
             binding.tries.text = "You took ${gameResult.tries} out of 11 tries"
@@ -71,13 +79,15 @@ class Result : Fragment() {
 
         //TODO fix play again button
         binding.buttonMainMenu.setOnClickListener {
-//            val action = ResultDirections.actionResultToMainMenu()
-//            navController.navigate(action)
+            val action = ResultDirections.actionResultToMainMenu()
+            navController.navigate(action)
         }
 
         binding.buttonPlayAgain.setOnClickListener {
+            //TODO if Multiplayer, make player ready and delete the old word
 //            val action = ResultDirections.actionResultToChooseWord()
 //            navController.navigate(action)
+            //TODO if Singleplayer, go back to category selection
         }
     }
 
