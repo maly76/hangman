@@ -137,28 +137,28 @@ class ChooseWord : Fragment() {
                         comp.guestInfos.wortToGuess = binding.word.text.toString()
                         comp.hostInfos.status = Player.Status.READY
                         if (comp.hostInfos.status == Player.Status.READY && comp.guestInfos.status == Player.Status.OFFLINE) {
-                            binding.buttonOk.visibility = View.GONE
-                            binding.word.visibility = View.GONE
-                            binding.oponentWord.visibility = View.GONE
-                            binding.choseHiddenWord.text = "Waiting for ${comp.guest!!.userName} to get ready .."
-                            binding.indeterminateBar.visibility = View.VISIBLE
+                            setWaitingForAponent(comp.guest!!.userName!!)
                         }
                     } else {
                         comp.hostInfos.hiddenWord = binding.word.text.toString()
                         comp.hostInfos.wortToGuess = binding.word.text.toString()
                         comp.guestInfos.status = Player.Status.READY
                         if (comp.guestInfos.status == Player.Status.READY && comp.hostInfos.status == Player.Status.OFFLINE) {
-                            binding.buttonOk.visibility = View.GONE
-                            binding.word.visibility = View.GONE
-                            binding.oponentWord.visibility = View.GONE
-                            binding.choseHiddenWord.text = "Waiting for ${comp.host.userName} to get ready .."
-                            binding.indeterminateBar.visibility = View.VISIBLE
+                            setWaitingForAponent(comp.host.userName!!)
                         }
                     }
                     competitionDAO.updateCompetition(comp)
                 }
             }
         }
+    }
+
+    private fun setWaitingForAponent(name: String) {
+        binding.buttonOk.visibility = View.GONE
+        binding.word.visibility = View.GONE
+        binding.oponentWord.visibility = View.GONE
+        binding.choseHiddenWord.text = "Waiting for ${name} to get ready .."
+        binding.indeterminateBar.visibility = View.VISIBLE
     }
 
     companion object {
