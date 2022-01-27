@@ -40,11 +40,10 @@ data class Player(
     }
 
     enum class Status {
-        WON,
-        LOSED,
         PLAYING,
         OFFLINE,
         READY,
-        AGAIN
+        AGAIN,
+        FINISHED
     }
 }

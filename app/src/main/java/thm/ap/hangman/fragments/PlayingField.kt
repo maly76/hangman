@@ -17,6 +17,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentPlayingFieldBinding
 import thm.ap.hangman.gamelogic.GameLogic
+import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
 import thm.ap.hangman.persistence.CompetitionDAO
 import java.io.Serializable
@@ -98,23 +99,25 @@ class PlayingField : Fragment() {
             } else {
                 isMultiPlayer = true
                 competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
-                    // Check if user is host or guest
                     if (comp.status == Result.Status.SUCCESS) {
-                        if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
-                            isHost = false
-                            gameLogic.setWord(comp.data.guestInfos.wortToGuess!!)
-                        } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
+                        // Check if user is host or guest
+                        if (comp.data!!.host.id == Firebase.auth.currentUser!!.uid) {
                             isHost = true
                             gameLogic.setWord(comp.data.hostInfos.wortToGuess!!)
+                        } else {
+                            isHost = false
+                            gameLogic.setWord(comp.data.guestInfos.wortToGuess!!)
                         }
+                        comp.data.guestInfos.status = Player.Status.PLAYING
+                        comp.data.hostInfos.status = Player.Status.PLAYING
+                        competitionDAO.updateCompetition(comp.data)
                         updateHiddenWord()
                     }
                 }
             }
         }
 
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     @SuppressLint("SetTextI18n")
@@ -169,41 +172,66 @@ class PlayingField : Fragment() {
             11 -> binding.imageView.setImageResource(R.drawable.hangman_11)
             else -> binding.imageView.setImageResource(R.drawable.hangman_11)
         }
-//        if (isMultiPlayer) {
-//            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) {
-//                if (isHost) {
-//                    it.data!!.hostInfos.tries = gameLogic.getTries()
-//                } else {
-//                    it.data!!.guestInfos.tries = gameLogic.getTries()
-//                }
-//            }
-//        }
+        if (isMultiPlayer) {
+            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { result ->
+                if (result.status == Result.Status.SUCCESS) {
+                    if (isHost) {
+                        result.data!!.hostInfos.tries = gameLogic.getTries()
+                    } else {
+                        result.data!!.guestInfos.tries = gameLogic.getTries()
+                    }
+                    competitionDAO.updateCompetition(result.data)
+                }
+            }
+        }
     }
 
     private fun gameWon() {
         val navController = findNavController()
-        val gameResult =
-            GameResult(
-                GameResult.Status.WON,
-                gameLogic.getGuessingWord(),
-                gameLogic.getTries(),
-                true,
-                roomId
-            )
+        val gameResult: GameResult
+        if (isMultiPlayer) {
+            gameResult =
+                GameResult(
+                    gameLogic.getGuessingWord(),
+                    gameLogic.getTries(),
+                    true,
+                    roomId
+                )
+            competitionDAO.updateStatus(roomId, Player.Status.FINISHED)
+        } else {
+            gameResult =
+                GameResult(
+                    gameLogic.getGuessingWord(),
+                    gameLogic.getTries(),
+                    true,
+                    null
+                )
+        }
         val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
 
     private fun gameLost() {
         val navController = findNavController()
-        val gameResult =
-            GameResult(
-                GameResult.Status.LOST,
-                gameLogic.getGuessingWord(),
-                gameLogic.getTries(),
-                false,
-                roomId
-            )
+        val gameResult: GameResult
+        if (isMultiPlayer) {
+            gameResult =
+                GameResult(
+                    gameLogic.getGuessingWord(),
+                    gameLogic.getTries(),
+                    false,
+                    roomId
+                )
+            competitionDAO.updateStatus(roomId, Player.Status.FINISHED)
+        } else {
+            gameResult =
+                GameResult(
+                    gameLogic.getGuessingWord(),
+                    gameLogic.getTries(),
+                    false,
+                    null
+                )
+        }
         val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
@@ -242,17 +270,11 @@ class PlayingField : Fragment() {
 
     @Keep
     class GameResult(
-        val status: Status,
         val word: String,
         val tries: Int,
         val success: Boolean,
-        val roomId: String
+        val roomId: String?
     ) : Serializable {
-        enum class Status {
-            WON,
-            LOST,
-            TIE
-        }
     }
 
 
