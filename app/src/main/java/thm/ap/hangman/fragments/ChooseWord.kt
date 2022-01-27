@@ -134,10 +134,26 @@ class ChooseWord : Fragment() {
                     val comp = result.data!!
                     if (isHost) {
                         comp.guestInfos.hiddenWord = binding.word.text.toString()
+                        comp.guestInfos.wortToGuess = binding.word.text.toString()
                         comp.hostInfos.status = Player.Status.READY
+                        if (comp.hostInfos.status == Player.Status.READY && comp.guestInfos.status == Player.Status.OFFLINE) {
+                            binding.buttonOk.visibility = View.GONE
+                            binding.word.visibility = View.GONE
+                            binding.oponentWord.visibility = View.GONE
+                            binding.choseHiddenWord.text = "Waiting for ${comp.guest!!.userName} to get ready .."
+                            binding.indeterminateBar.visibility = View.VISIBLE
+                        }
                     } else {
                         comp.hostInfos.hiddenWord = binding.word.text.toString()
+                        comp.hostInfos.wortToGuess = binding.word.text.toString()
                         comp.guestInfos.status = Player.Status.READY
+                        if (comp.guestInfos.status == Player.Status.READY && comp.hostInfos.status == Player.Status.OFFLINE) {
+                            binding.buttonOk.visibility = View.GONE
+                            binding.word.visibility = View.GONE
+                            binding.oponentWord.visibility = View.GONE
+                            binding.choseHiddenWord.text = "Waiting for ${comp.host.userName} to get ready .."
+                            binding.indeterminateBar.visibility = View.VISIBLE
+                        }
                     }
                     competitionDAO.updateCompetition(comp)
                 }
