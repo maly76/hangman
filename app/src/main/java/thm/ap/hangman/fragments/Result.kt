@@ -168,20 +168,20 @@ class Result : Fragment() {
 
         /** win a game without drawing a line in single player */
         if (!isMultiplayer) {
-            if (gameResult.status == PlayingField.GameResult.Status.WON && gameResult.tries == 0) {
+            if (won == 1 && gameResult.tries == 0) {
                 achievementService.unlockAchievement(getString(R.string.win_game_without_lines_single))
             }
         }
 
         /** win a game without drawing a line in multi player */
         if (isMultiplayer) {
-            if (gameResult.status == PlayingField.GameResult.Status.WON && gameResult.tries == 0) {
+            if (won == 1 && gameResult.tries == 0) {
                 achievementService.unlockAchievement(getString(R.string.win_game_without_lines_multi))
             }
         }
 
         /** Guess a word with the length of at least 10 characters */
-        if (gameResult.status == PlayingField.GameResult.Status.WON && gameResult.word.length >= 10) {
+        if (won == 1 && gameResult.word.length >= 10) {
             achievementService.unlockAchievement(getString(R.string.win_game_with_10_characters))
         }
     }
