@@ -92,7 +92,7 @@ class SinglePlayer : Fragment() {
         val navController = findNavController()
 
         binding.buttonChoose.setOnClickListener {
-            val action = SinglePlayerDirections.actionSinglePlayerToPlayingField()
+            val action = SinglePlayerDirections.actionSinglePlayerToPlayingField("singlePlayer")
             navController.navigate(action)//pass useful data
         }
     }
