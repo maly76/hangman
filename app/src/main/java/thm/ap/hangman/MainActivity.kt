@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                     baseContext, "Play Games authentication failed.",
                     Toast.LENGTH_SHORT
                 ).show()
+                finish()
             }
         }
     }
