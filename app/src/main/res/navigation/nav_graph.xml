@@ -26,8 +26,8 @@
         android:label="fragment_single_player"
         tools:layout="@layout/fragment_single_player">
         <action
-            android:id="@+id/action_singlePlayer_to_categories"
-            app:destination="@id/categories" />
+            android:id="@+id/action_singlePlayer_to_playingField"
+            app:destination="@id/playingField" />
     </fragment>
     <fragment
         android:id="@+id/multiPlayer"
@@ -82,9 +82,4 @@
             android:name="GameResult"
             app:argType="thm.ap.hangman.fragments.PlayingField$GameResult" />
     </fragment>
-    <fragment
-        android:id="@+id/categories"
-        android:name="thm.ap.hangman.fragments.Categories"
-        android:label="fragment_categories"
-        tools:layout="@layout/fragment_categories" />
 </navigation>
