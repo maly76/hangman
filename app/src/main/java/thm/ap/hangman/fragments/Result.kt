@@ -209,9 +209,8 @@ class Result : Fragment() {
                         }
                     }
             } else {
-                //TODO if Singleplayer, go back to category selection
-//                val action = ResultDirections.actionResultToCategory()
-//                navController.navigate(action)
+                val action = ResultDirections.actionResultToSinglePlayer()
+                navController.navigate(action)
             }
         }
     }
