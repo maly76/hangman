@@ -15,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import thm.ap.hangman.persistence.CategoryDAO
 import thm.ap.hangman.persistence.CompetitionDAO
 import thm.ap.hangman.persistence.PlayerDAO
+import thm.ap.hangman.service.AchievementService
 import thm.ap.hangman.service.AuthenticationService
 
 class MainActivity : AppCompatActivity() {
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
         if (checkConnectivity()) {
             authService.authenticate()
         } else {

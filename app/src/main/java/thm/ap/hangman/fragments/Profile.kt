@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.databinding.FragmentProfileBinding
 import thm.ap.hangman.models.Statistic
 import thm.ap.hangman.persistence.PlayerDAO
+import thm.ap.hangman.service.AchievementService
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -44,7 +45,15 @@ class Profile : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        var player = playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
+        val achievementService = AchievementService.of(requireActivity())
+
+        binding.buttonAchievements.setOnClickListener {
+            achievementService.showAchievements().addOnSuccessListener { intent ->
+                startActivityForResult(intent, AchievementService.RC_ACHIEVEMENT_UI)
+            }
+        }
+
+        val player = playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
 
         player.observe(viewLifecycleOwner) {
             if (it.data != null) {

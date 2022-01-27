@@ -12,7 +12,7 @@
     <string name="auth_fail">Authentication successfully</string>
     <string name="signin_fail">sign in successfully</string>
     <string name="signup_fail">sign up successfully</string>
-
+    <string name="achievemenets">Show achievements</string>
     <string name="no_internet">No Internet</string>
     <string name="no_internet_msg">OOPS you have no internet, please make sure you have internet access, to be able to use the app.</string>
     <string name="exit">Exit</string>
