@@ -15,6 +15,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.R
 import thm.ap.hangman.databinding.FragmentPlayingFieldBinding
 import thm.ap.hangman.gamelogic.GameLogic
+import thm.ap.hangman.models.Result
 import thm.ap.hangman.persistence.CompetitionDAO
 import java.io.Serializable
 
@@ -39,7 +40,7 @@ class PlayingField : Fragment() {
 
     private val gameLogic = GameLogic()
 
-    private val competitionDAO = CompetitionDAO(viewLifecycleOwner)
+    private val competitionDAO = CompetitionDAO(this)
 
     private var isMultiPlayer = false
     private lateinit var roomId: String
@@ -67,13 +68,15 @@ class PlayingField : Fragment() {
             if (roomId == "singlePlayer") {
                 isMultiPlayer = false
             } else {
-            isMultiPlayer = true
+                isMultiPlayer = true
                 competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
                     // Check if user is host or guest
-                    if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
-                        isHost = false
-                    } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
-                        isHost = true
+                    if (comp.status == Result.Status.SUCCESS) {
+                        if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
+                            isHost = false
+                        } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
+                            isHost = true
+                        }
                     }
                 }
             }
