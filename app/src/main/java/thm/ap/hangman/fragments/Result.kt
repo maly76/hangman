@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.databinding.FragmentResultBinding
+import thm.ap.hangman.models.Statistic
+import thm.ap.hangman.persistence.PlayerDAO
+import thm.ap.hangman.service.AuthenticationService
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,7 +48,7 @@ class Result : Fragment() {
 
         if (arguments != null) {
             val gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
-
+            updateStats(gameResult)
             if (isMultiplayer) {
                 val oponentUsername = "testuser"
 
@@ -71,12 +74,60 @@ class Result : Fragment() {
         return view
     }
 
+    private fun updateStats(gameResult: PlayingField.GameResult) {
+        val playerDAO = PlayerDAO()
+        val isMultiplayer = true
+        playerDAO.getPlayerByID(AuthenticationService.getCurrentUser()!!.uid).observe(this) { result ->
+            if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
+                val player = result.data!!
+                updateObject(if (isMultiplayer) player.statistic!!.mpStats else player.statistic!!.spStats, gameResult)
+                playerDAO.updatePlayer(player)
+            }
+        }
+    }
+
+    private fun updateObject(stats: Statistic.Stats, gameResult: PlayingField.GameResult): Statistic.Stats {
+        val categoryID = "CSPifMcrWbVK54Oke6EK"         // should be given
+        // check if a rate for this category already exists
+        val rates = stats.rates.filter { rate -> rate.categoryID == categoryID }
+        val rate = if (rates.isEmpty()) Statistic.Rate.new(categoryID) else rates[0]
+        when (gameResult.status) {
+            PlayingField.GameResult.Status.WON -> {
+                rate.wins++
+                if (!stats.winStreakActive) {
+                    stats.oldWinStreak = 0
+                    stats.winStreakActive = true
+                }
+                stats.oldWinStreak++
+                if (stats.oldWinStreak > stats.winstreak) {
+                    stats.winstreak = stats.oldWinStreak
+                }
+
+                if (gameResult.word.length > stats.longestWord.length) {
+                    stats.longestWord = gameResult.word
+                }
+            }
+            PlayingField.GameResult.Status.LOST -> {
+                rate.losses++
+                stats.winStreakActive = false
+            }
+            else -> {
+                rate.ties++
+                stats.winStreakActive = false
+            }
+        }
+
+        if (rates.isEmpty()) {
+            stats.rates.add(rate)
+        }
+        return stats
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val navController = findNavController()
-
-
 
         binding.buttonMainMenu.setOnClickListener {
             //TODO ifMultiplayer delete Competition after pressing main menu button

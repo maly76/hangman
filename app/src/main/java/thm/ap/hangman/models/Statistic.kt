@@ -19,8 +19,10 @@ data class Statistic(
 
     class Stats {
         var rates: MutableList<Rate> = mutableListOf()
-        var longestWord: String? = null
+        var longestWord: String = ""
         var winstreak: Int = 0
+        var oldWinStreak: Int = 0
+        var winStreakActive: Boolean = false
 
         fun getGeneralRate(): Rate {
             val generalRate = Rate.empty()
@@ -31,9 +33,9 @@ data class Statistic(
         }
     }
 
-    class Rate private constructor(var categoryID: String? = null) {
-        var wins: Int = 4
-        var losses: Int = 2
+    class Rate constructor(var categoryID: String? = null) {
+        var wins: Int = 0
+        var losses: Int = 0
         var ties: Int = 0
 
         fun getNumebrOfPlayedGames() = wins + losses + ties
