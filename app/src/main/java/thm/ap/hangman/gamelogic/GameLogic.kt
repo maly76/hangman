@@ -4,7 +4,7 @@ import java.util.*
 
 
 class GameLogic {
-    private var wordToGuess = "Zucchini"
+    private var wordToGuess = ""
     private lateinit var hiddenWord: String
     private var tries = 0
     private val amountTries = 11

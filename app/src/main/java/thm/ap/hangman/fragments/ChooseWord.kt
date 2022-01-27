@@ -1,10 +1,13 @@
 package thm.ap.hangman.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.R
@@ -58,7 +61,7 @@ class ChooseWord : Fragment() {
                     if (result.status == Result.Status.SUCCESS) {
                         val comp = result.data!!
                         binding.room.text = "Room code: ${comp.roomCode}"
-                        if(AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
+                        if (AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
                             /** HOST */
                             isHost = true
                             if (comp.guest != null) {
@@ -85,13 +88,22 @@ class ChooseWord : Fragment() {
     }
 
     private fun subscribeCompForChanges(roomId: String) {
+        competitionDAO.notifyIfRoomDeleted(roomId).observe(viewLifecycleOwner) {
+            if (it) {
+                val navController = findNavController()
+                val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                navController.navigate(action)
+            }
+        }
+
         competitionDAO.subscribeCompetition(roomId).observe(viewLifecycleOwner) {
             if (it.status == Result.Status.SUCCESS) {
                 val c = it.data!!
                 if (isHost && c.hostInfos.hiddenWord != null) {
                     binding.hiddenWord.text = GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
                 } else if (!isHost && c.guestInfos.hiddenWord != null) {
-                    binding.hiddenWord.text = GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
+                    binding.hiddenWord.text =
+                        GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
                 }
 
                 if (c.guest != null && !guestFound) {
@@ -127,6 +139,31 @@ class ChooseWord : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
+                    builder.setCancelable(false)
+                    builder.setMessage("Do you want to go back?")
+                    builder.setPositiveButton(
+                        "Yes"
+                    ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
+                        competitionDAO.exitRoom(roomID!!)
+                        val navController = findNavController()
+                        val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                        navController.navigate(action)
+                    }
+                    builder.setNegativeButton(
+                        "No"
+                    ) { dialog, _ -> //if user select "No", just cancel this dialog and continue with app
+                        dialog.cancel()
+                    }
+                    val alert: AlertDialog = builder.create()
+                    alert.show()
+                }
+            })
+
         val buttonOk: Button = view.findViewById(R.id.button_ok)
         buttonOk.setOnClickListener {
             competitionDAO.getCompetitionByID(roomID!!).observe(viewLifecycleOwner) { result ->
@@ -134,15 +171,31 @@ class ChooseWord : Fragment() {
                     val comp = result.data!!
                     if (isHost) {
                         comp.guestInfos.hiddenWord = binding.word.text.toString()
+                        comp.guestInfos.wortToGuess = binding.word.text.toString()
                         comp.hostInfos.status = Player.Status.READY
+                        if (comp.hostInfos.status == Player.Status.READY && comp.guestInfos.status == Player.Status.OFFLINE) {
+                            setWaitingForAponent(comp.guest!!.userName!!)
+                        }
                     } else {
                         comp.hostInfos.hiddenWord = binding.word.text.toString()
+                        comp.hostInfos.wortToGuess = binding.word.text.toString()
                         comp.guestInfos.status = Player.Status.READY
+                        if (comp.guestInfos.status == Player.Status.READY && comp.hostInfos.status == Player.Status.OFFLINE) {
+                            setWaitingForAponent(comp.host.userName!!)
+                        }
                     }
                     competitionDAO.updateCompetition(comp)
                 }
             }
         }
+    }
+
+    private fun setWaitingForAponent(name: String) {
+        binding.buttonOk.visibility = View.GONE
+        binding.word.visibility = View.GONE
+        binding.oponentWord.visibility = View.GONE
+        binding.choseHiddenWord.text = "Waiting for ${name} to get ready .."
+        binding.indeterminateBar.visibility = View.VISIBLE
     }
 
     companion object {

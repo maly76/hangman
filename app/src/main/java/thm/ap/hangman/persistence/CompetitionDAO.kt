@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Competition
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
+import thm.ap.hangman.service.AuthenticationService
 import java.io.Serializable
 
 /**
@@ -18,6 +19,7 @@ import java.io.Serializable
 class CompetitionDAO(private val owner: LifecycleOwner) {
     private val competitionsRef: CollectionReference = Firebase.firestore.collection(TAG)
     private lateinit var competitionRegistration: ListenerRegistration
+    private lateinit var competitionsRegistration: ListenerRegistration
 
     private val competitionObserver = MutableLiveData<Result<Competition>>()
 
@@ -148,6 +150,39 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
         return observer
     }
 
+    fun exitRoom(roomId: String) {
+        competitionsRef.document(roomId).get()
+            .addOnCompleteListener() { task ->
+                if (task.isSuccessful && task.result.exists()) {
+                    val comp = task.result.toObject<CompetitionSnapshot>()!!
+                    if (AuthenticationService.getCurrentUser()!!.uid == comp.hostRef!!.id) {
+                        /** Host */
+                        deleteCompetition(roomId)
+                    } else {
+                        /** Guest */
+                        comp.guestInfos = Competition.PlayerInfos()
+                        comp.guestRef = null
+                        competitionsRef.document(roomId).set(comp)
+                    }
+                }
+            }
+    }
+
+    fun notifyIfRoomDeleted(roomId: String): MutableLiveData<Boolean> {
+        val observer = MutableLiveData<Boolean>()
+
+        competitionsRegistration = competitionsRef.addSnapshotListener { snapshot, e ->
+            if (snapshot != null) {
+                val data = snapshot.documents.filter { doc -> doc.id == roomId }
+                if (data.isEmpty()) {
+                    observer.value = true
+                }
+            }
+        }
+
+        return observer
+    }
+
     /**
      * add competition to the database
      * @param competition is the specified competition which will be added to the database
@@ -255,6 +290,7 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
      * */
     fun unsubscripeCompetition() {
         competitionRegistration.remove()
+        competitionsRegistration.remove()
     }
 
     companion object {
