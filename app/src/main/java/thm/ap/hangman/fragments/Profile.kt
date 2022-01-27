@@ -57,7 +57,7 @@ class Profile : Fragment() {
                     binding.won.text = "Games Won: ${spStats.getGeneralRate().wins}"
                     binding.lost.text = "Games Lost: ${spStats.getGeneralRate().losses}"
                     binding.ratio.text = "Win ratio: ${spStats.getGeneralRate().getWinLosRate()}%"
-                    binding.longest.text = "Longest word: ${spStats.longestWord}"
+                    binding.longest.text = "Longest word: ${if (spStats.longestWord != null) spStats.longestWord else ""}"
                     binding.streak.text = "Longest winstreak: ${spStats.winstreak}"
                 }
 
@@ -68,7 +68,7 @@ class Profile : Fragment() {
                     binding.wonMp.text = "Games Won: ${mpStats.getGeneralRate().wins}"
                     binding.lostMp.text = "Games Lost: ${mpStats.getGeneralRate().losses}"
                     binding.ratioMp.text = "Win ratio: ${mpStats.getGeneralRate().getWinLosRate()}%"
-                    binding.longestMp.text = "Longest word: ${mpStats.longestWord}"
+                    binding.longestMp.text = "Longest word: ${if (mpStats.longestWord != null) mpStats.longestWord else ""}"
                     binding.streakMp.text = "Longest winstreak: ${mpStats.winstreak}"
                 }
             }
