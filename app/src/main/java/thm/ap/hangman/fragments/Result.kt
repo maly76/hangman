@@ -77,8 +77,9 @@ class Result : Fragment() {
         val navController = findNavController()
 
 
-        //TODO fix play again button
+
         binding.buttonMainMenu.setOnClickListener {
+            //TODO ifMultiplayer delete Competition after pressing main menu button
             val action = ResultDirections.actionResultToMainMenu()
             navController.navigate(action)
         }
