@@ -79,6 +79,7 @@ class PlayingField : Fragment() {
                             isHost = true
                             gameLogic.setWord(comp.data.hostInfos.wortToGuess!!)
                         }
+                        updateHiddenWord()
                     }
                 }
             }
@@ -122,15 +123,6 @@ class PlayingField : Fragment() {
     }
 
     private fun updateHiddenWord() {
-//        if (isMultiPlayer) {
-//            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
-//                if (isHost) {
-//                    comp.data!!.hostInfos.hiddenWord?.let { gameLogic.setWord(it) }
-//                } else {
-//                    comp.data!!.guestInfos.hiddenWord?.let { gameLogic.setWord(it) }
-//                }
-//            }
-//        }
         binding.word.text = gameLogic.getHiddenWord()
     }
 
