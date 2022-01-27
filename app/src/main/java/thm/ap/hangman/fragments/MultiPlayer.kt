@@ -1,6 +1,8 @@
 package thm.ap.hangman.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,7 +60,24 @@ class MultiPlayer : Fragment() {
 
         val navController = findNavController()
 
-        //TODO check if room code was entered
+        binding.roomCode.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s != null && s.length == 3) {
+                    binding.buttonCreateRoom.isEnabled = true
+                    binding.buttonEnterRoom.isEnabled = true
+                } else {
+                    binding.buttonCreateRoom.isEnabled = false
+                    binding.buttonEnterRoom.isEnabled = false
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
+
         binding.buttonEnterRoom.setOnClickListener {
             playerDAO.getPlayerByID(Firebase.auth.currentUser!!.uid)
                 .observe(viewLifecycleOwner) { result ->
