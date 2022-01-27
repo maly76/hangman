@@ -66,25 +66,27 @@ class MultiPlayer : Fragment() {
                         competitionDAO.getCompetitionByID(binding.roomCode.text.toString())
                             .observe(viewLifecycleOwner) { comp ->
                                 if (comp.status == Result.Status.SUCCESS) {
-                                    comp.data!!.guest = result.data
-                                    competitionDAO.updateCompetition(comp.data)
-                                        .observe(viewLifecycleOwner) { r ->
-                                            if (r.status == Result.Status.SUCCESS) {
-                                                val action =
-                                                    MultiPlayerDirections.actionMultiPlayerToChooseWord(
-                                                        comp.data.roomCode
-                                                    )
-                                                navController.navigate(action)
+                                    if (comp.data!!.guest != null) {
+                                        clearErrors()
+                                        binding.errFull.visibility = View.VISIBLE
+                                    } else {
+                                        comp.data.guest = result.data
+                                        competitionDAO.updateCompetition(comp.data)
+                                            .observe(viewLifecycleOwner) { r ->
+                                                if (r.status == Result.Status.SUCCESS) {
+                                                    val action =
+                                                        MultiPlayerDirections.actionMultiPlayerToChooseWord(
+                                                            comp.data.roomCode
+                                                        )
+                                                    navController.navigate(action)
+                                                }
                                             }
-                                        }
-                                } else if (result.status != Result.Status.IN_PROGRESS) {
-                                    //TODO clear error after time
+                                    }
+                                } else if (comp.status == Result.Status.FAILURE) {
+                                    clearErrors()
                                     binding.errNotExists.visibility = View.VISIBLE
                                 }
                             }
-                        //TODO still possible to join full room
-                    } else if (result.status != Result.Status.IN_PROGRESS) {
-                        binding.errFull.visibility = View.VISIBLE
                     }
                 }
         }
@@ -103,14 +105,20 @@ class MultiPlayer : Fragment() {
                                 val action =
                                     MultiPlayerDirections.actionMultiPlayerToChooseWord(it.data!!.roomCode)
                                 navController.navigate(action)
-                            } else if (result.status != Result.Status.IN_PROGRESS) {
-                                //TODO clear error after time
+                            } else if (it.status == Result.Status.FAILURE) {
+                                clearErrors()
                                 binding.errExists.visibility = View.VISIBLE
                             }
                         }
                     }
                 }
         }
+    }
+
+    private fun clearErrors() {
+        binding.errNotExists.visibility = View.GONE
+        binding.errFull.visibility = View.GONE
+        binding.errExists.visibility = View.GONE
     }
 
     companion object {

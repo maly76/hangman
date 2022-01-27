@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.models.Competition
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Result
+import thm.ap.hangman.service.AuthenticationService
 import java.io.Serializable
 
 /**
@@ -146,6 +147,24 @@ class CompetitionDAO(private val owner: LifecycleOwner) {
             }
 
         return observer
+    }
+
+    fun exitRoom(roomId: String) {
+        competitionsRef.document(roomId).get()
+            .addOnCompleteListener() { task ->
+                if (task.isSuccessful && task.result.exists()) {
+                    val comp = task.result.toObject<CompetitionSnapshot>()!!
+                    if (AuthenticationService.getCurrentUser()!!.uid == comp.hostRef!!.id) {
+                        /** Host */
+                        deleteCompetition(roomId)
+                    } else {
+                        /** Guest */
+                        comp.guestInfos = Competition.PlayerInfos()
+                        comp.guestRef = null
+                        competitionsRef.document(roomId).set(comp)
+                    }
+                }
+            }
     }
 
     /**

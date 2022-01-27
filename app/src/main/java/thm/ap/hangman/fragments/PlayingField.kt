@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.Keep
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -62,6 +63,15 @@ class PlayingField : Fragment() {
         _binding = FragmentPlayingFieldBinding.inflate(inflater, container, false)
         bindButtons()
         binding.guessButton.setOnClickListener { guessWord() }
+
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                competitionDAO.exitRoom(roomId)
+                val navController = findNavController()
+                val action = PlayingFieldDirections.actionPlayingFieldToMultiPlayer()
+                navController.navigate(action)
+            }
+        })
 
         if (arguments != null) {
             roomId = requireArguments().getString("roomId").toString()

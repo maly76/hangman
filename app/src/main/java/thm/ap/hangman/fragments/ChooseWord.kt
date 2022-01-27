@@ -1,10 +1,12 @@
 package thm.ap.hangman.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.R
@@ -126,6 +128,15 @@ class ChooseWord : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                competitionDAO.exitRoom(roomID!!)
+                val navController = findNavController()
+                val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                navController.navigate(action)
+            }
+        })
 
         val buttonOk: Button = view.findViewById(R.id.button_ok)
         buttonOk.setOnClickListener {
