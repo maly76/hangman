@@ -54,9 +54,6 @@
         <argument
             android:name="roomId"
             app:argType="string" />
-        <action
-            android:id="@+id/action_chooseWord_to_multiPlayer"
-            app:destination="@id/multiPlayer" />
     </fragment>
     <fragment
         android:id="@+id/playingField"
@@ -71,7 +68,8 @@
             app:argType="string" />
         <action
             android:id="@+id/action_playingField_to_multiPlayer"
-            app:destination="@id/multiPlayer" />
+            app:destination="@id/multiPlayer"
+            app:popUpTo="@id/multiPlayer"/>
     </fragment>
     <fragment
         android:id="@+id/result"
@@ -80,10 +78,12 @@
         tools:layout="@layout/fragment_result">
         <action
             android:id="@+id/action_result_to_chooseWord"
-            app:destination="@id/chooseWord" />
+            app:destination="@id/chooseWord"
+            app:popUpTo="@id/chooseWord"/>
         <action
             android:id="@+id/action_result_to_mainMenu"
-            app:destination="@id/mainMenu" />
+            app:destination="@id/mainMenu"
+            app:popUpTo="@id/mainMenu"/>
         <argument
             android:name="GameResult"
             app:argType="thm.ap.hangman.fragments.PlayingField$GameResult" />

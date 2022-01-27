@@ -91,8 +91,7 @@ class ChooseWord : Fragment() {
         competitionDAO.notifyIfRoomDeleted(roomId).observe(viewLifecycleOwner) {
             if (it) {
                 val navController = findNavController()
-                val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
-                navController.navigate(action)
+                navController.popBackStack()
             }
         }
 
@@ -151,8 +150,7 @@ class ChooseWord : Fragment() {
                     ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
                         competitionDAO.exitRoom(roomID!!)
                         val navController = findNavController()
-                        val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
-                        navController.navigate(action)
+                        navController.popBackStack()
                     }
                     builder.setNegativeButton(
                         "No"

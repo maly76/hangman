@@ -266,7 +266,7 @@ class Result : Fragment() {
                         if (isMultiplayer) {
                             competitionDAO.exitRoom(gameResult.roomId!!)
                         }
-                        val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                        val action = ResultDirections.actionResultToMainMenu()
                         navController.navigate(action)
                     }
                     builder.setNegativeButton(
