@@ -96,7 +96,7 @@ class ChooseWord : Fragment() {
 
                 if (c.guest != null && !guestFound) {
                     guestFound = true
-                    binding.oponent.text = c.guest!!.userName
+                    binding.oponent.text = c.host.userName
                     binding.indeterminateBar.visibility = View.GONE
                     setVisible(true)
                 }
