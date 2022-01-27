@@ -39,11 +39,11 @@ class PlayingField : Fragment() {
 
     private val gameLogic = GameLogic()
 
-//    private val competitionDAO = CompetitionDAO(viewLifecycleOwner)
-//
-//    private var isMultiPlayer = false
-//    private lateinit var roomId: String
-//    private var isHost = false
+    private val competitionDAO = CompetitionDAO(viewLifecycleOwner)
+
+    private var isMultiPlayer = false
+    private lateinit var roomId: String
+    private var isHost = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,20 +62,22 @@ class PlayingField : Fragment() {
         bindButtons()
         binding.guessButton.setOnClickListener { guessWord() }
 
-//        if (arguments != null) {
-//            isMultiPlayer = true
-//            roomId = requireArguments().getString("roomId").toString()
-//            competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
-//                // Check if user is host or guest
-//                if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
-//                    isHost = false
-//                } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
-//                    isHost = true
-//                }
-//            }
-//        } else {
-//            isMultiPlayer = false
-//        }
+        if (arguments != null) {
+            roomId = requireArguments().getString("roomId").toString()
+            if (roomId == "singlePlayer") {
+                isMultiPlayer = false
+            } else {
+            isMultiPlayer = true
+                competitionDAO.getCompetitionByID(roomId).observe(viewLifecycleOwner) { comp ->
+                    // Check if user is host or guest
+                    if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
+                        isHost = false
+                    } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
+                        isHost = true
+                    }
+                }
+            }
+        }
 
         val view = binding.root
         return view
