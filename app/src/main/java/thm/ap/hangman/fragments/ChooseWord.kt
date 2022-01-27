@@ -58,60 +58,20 @@ class ChooseWord : Fragment() {
                     if (result.status == Result.Status.SUCCESS) {
                         val comp = result.data!!
                         binding.room.text = "Room code: ${comp.roomCode}"
-                        if (AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
+                        if(AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
                             /** HOST */
                             isHost = true
                             if (comp.guest != null) {
-                                val hiddenword = comp.guestInfos.hiddenWord
-                                if (hiddenword != null) {
-                                    binding.hiddenWord.text =
-                                        GameLogic.generateHiddenWord(hiddenword)
-                                }
                                 binding.oponent.text = comp.guest!!.userName
                                 setVisible(true)
                             } else {
                                 binding.indeterminateBar.visibility = View.VISIBLE
                                 binding.oponent.text = "Waiting for an openent"
-                                competitionDAO.subscribeCompetition(roomId)
-                                    .observe(viewLifecycleOwner) {
-                                        if (it.status == Result.Status.SUCCESS) {
-                                            val c = it.data!!
-                                            if (isHost && c.hostInfos.hiddenWord != null) {
-                                                binding.hiddenWord.text =
-                                                    GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
-                                            } else if (!isHost && c.guestInfos.hiddenWord != null) {
-                                                binding.hiddenWord.text =
-                                                    GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
-                                            }
-                                            if (c.guest != null && !guestFound) {
-                                                guestFound = true
-                                                val hiddenword = c.guestInfos.hiddenWord
-                                                if (hiddenword != null) {
-                                                    binding.hiddenWord.text =
-                                                        GameLogic.generateHiddenWord(hiddenword)
-                                                }
-                                                binding.oponent.text = c.guest!!.userName
-                                                binding.indeterminateBar.visibility = View.GONE
-                                                setVisible(true)
-                                            }
-
-                                            if (c.guest != null && c.hostInfos.status == Player.Status.READY && c.guestInfos.status == Player.Status.READY) {
-                                                val navController = findNavController()
-                                                val action =
-                                                    ChooseWordDirections.actionChooseWordToPlayingField(
-                                                        roomID!!
-                                                    )
-                                                navController.navigate(action)
-                                            }
-                                        }
-                                    }
+                                subscribeCompForChanges(roomId)
                             }
                         } else {
                             /** GUEST */
-                            val hiddenword = comp.hostInfos.hiddenWord
-                            if (hiddenword != null) {
-                                binding.hiddenWord.text = GameLogic.generateHiddenWord(hiddenword)
-                            }
+                            subscribeCompForChanges(roomId)
                             binding.oponent.text = comp.host.userName
                             setVisible(true)
                         }
@@ -122,6 +82,33 @@ class ChooseWord : Fragment() {
 
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    private fun subscribeCompForChanges(roomId: String) {
+        competitionDAO.subscribeCompetition(roomId).observe(viewLifecycleOwner) {
+            if (it.status == Result.Status.SUCCESS) {
+                val c = it.data!!
+                if (isHost && c.hostInfos.hiddenWord != null) {
+                    binding.hiddenWord.text = GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
+                } else if (!isHost && c.guestInfos.hiddenWord != null) {
+                    binding.hiddenWord.text = GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
+                }
+
+                if (c.guest != null && !guestFound) {
+                    guestFound = true
+                    binding.oponent.text = c.guest!!.userName
+                    binding.indeterminateBar.visibility = View.GONE
+                    setVisible(true)
+                }
+
+                if (c.guest != null && c.hostInfos.status == Player.Status.READY && c.guestInfos.status == Player.Status.READY) {
+                    competitionDAO.unsubscripeCompetition()
+                    val navController = findNavController()
+                    val action = ChooseWordDirections.actionChooseWordToPlayingField(roomID!!)
+                    navController.navigate(action)
+                }
+            }
+        }
     }
 
     private fun setVisible(visible: Boolean) {
