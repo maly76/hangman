@@ -74,8 +74,10 @@ class PlayingField : Fragment() {
                     if (comp.status == Result.Status.SUCCESS) {
                         if (comp.data!!.guest!!.id == Firebase.auth.currentUser!!.uid) {
                             isHost = false
+                            gameLogic.setWord(comp.data.guestInfos.wortToGuess!!)
                         } else if (comp.data.host.id == Firebase.auth.currentUser!!.uid) {
                             isHost = true
+                            gameLogic.setWord(comp.data.hostInfos.wortToGuess!!)
                         }
                     }
                 }
