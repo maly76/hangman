@@ -150,20 +150,7 @@ class Result : Fragment() {
         val navController = findNavController()
 
         binding.buttonMainMenu.setOnClickListener {
-            competitionDAO.getCompetitionByID(gameResult.roomId)
-                .observe(viewLifecycleOwner) { comp ->
-                    if (AuthenticationService.getCurrentUser()!!.uid == comp.data!!.host.id) {
-                        /* Host */
-                        competitionDAO.deleteCompetition(gameResult.roomId)
-                    } else {
-                        /* Guest */
-                        comp.data.guestInfos.wortToGuess = null
-                        comp.data.guestInfos.hiddenWord = null
-                        comp.data.guestInfos.status = Player.Status.OFFLINE
-                        comp.data.guest = null
-                    }
-
-                }
+            competitionDAO.exitRoom(gameResult.roomId)
             val action = ResultDirections.actionResultToMainMenu()
             navController.navigate(action)
         }
