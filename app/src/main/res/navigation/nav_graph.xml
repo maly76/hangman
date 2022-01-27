@@ -69,6 +69,9 @@
         <argument
             android:name="roomId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_playingField_to_multiPlayer"
+            app:destination="@id/multiPlayer" />
     </fragment>
     <fragment
         android:id="@+id/result"
