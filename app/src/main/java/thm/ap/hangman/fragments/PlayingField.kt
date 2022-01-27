@@ -1,6 +1,7 @@
 package thm.ap.hangman.fragments
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -64,14 +65,30 @@ class PlayingField : Fragment() {
         bindButtons()
         binding.guessButton.setOnClickListener { guessWord() }
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                competitionDAO.exitRoom(roomId)
-                val navController = findNavController()
-                val action = PlayingFieldDirections.actionPlayingFieldToMultiPlayer()
-                navController.navigate(action)
-            }
-        })
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
+                    builder.setCancelable(false)
+                    builder.setMessage("Do you want to go back?")
+                    builder.setPositiveButton(
+                        "Yes"
+                    ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
+                        competitionDAO.exitRoom(roomId)
+                        val navController = findNavController()
+                        val action = PlayingFieldDirections.actionPlayingFieldToMultiPlayer()
+                        navController.navigate(action)
+                    }
+                    builder.setNegativeButton(
+                        "No"
+                    ) { dialog, _ -> //if user select "No", just cancel this dialog and continue with app
+                        dialog.cancel()
+                    }
+                    val alert: AlertDialog = builder.create()
+                    alert.show()
+                }
+            })
 
         if (arguments != null) {
             roomId = requireArguments().getString("roomId").toString()
@@ -166,7 +183,13 @@ class PlayingField : Fragment() {
     private fun gameWon() {
         val navController = findNavController()
         val gameResult =
-            GameResult(GameResult.Status.WON, gameLogic.getGuessingWord(), gameLogic.getTries(), true, roomId)
+            GameResult(
+                GameResult.Status.WON,
+                gameLogic.getGuessingWord(),
+                gameLogic.getTries(),
+                true,
+                roomId
+            )
         val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
@@ -174,7 +197,13 @@ class PlayingField : Fragment() {
     private fun gameLost() {
         val navController = findNavController()
         val gameResult =
-            GameResult(GameResult.Status.LOST, gameLogic.getGuessingWord(), gameLogic.getTries(), false, roomId)
+            GameResult(
+                GameResult.Status.LOST,
+                gameLogic.getGuessingWord(),
+                gameLogic.getTries(),
+                false,
+                roomId
+            )
         val action = PlayingFieldDirections.actionPlayingFieldToResult(gameResult)
         navController.navigate(action)
     }
@@ -212,7 +241,13 @@ class PlayingField : Fragment() {
     }
 
     @Keep
-    class GameResult(val status: Status, val word: String, val tries: Int, val success: Boolean, val roomId: String) : Serializable {
+    class GameResult(
+        val status: Status,
+        val word: String,
+        val tries: Int,
+        val success: Boolean,
+        val roomId: String
+    ) : Serializable {
         enum class Status {
             WON,
             LOST,

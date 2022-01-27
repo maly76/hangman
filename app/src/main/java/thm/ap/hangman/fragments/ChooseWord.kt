@@ -1,7 +1,7 @@
 package thm.ap.hangman.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +60,7 @@ class ChooseWord : Fragment() {
                     if (result.status == Result.Status.SUCCESS) {
                         val comp = result.data!!
                         binding.room.text = "Room code: ${comp.roomCode}"
-                        if(AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
+                        if (AuthenticationService.getCurrentUser()!!.uid == comp.host.id) {
                             /** HOST */
                             isHost = true
                             if (comp.guest != null) {
@@ -93,7 +93,8 @@ class ChooseWord : Fragment() {
                 if (isHost && c.hostInfos.hiddenWord != null) {
                     binding.hiddenWord.text = GameLogic.generateHiddenWord(c.hostInfos.hiddenWord!!)
                 } else if (!isHost && c.guestInfos.hiddenWord != null) {
-                    binding.hiddenWord.text = GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
+                    binding.hiddenWord.text =
+                        GameLogic.generateHiddenWord(c.guestInfos.hiddenWord!!)
                 }
 
                 if (c.guest != null && !guestFound) {
@@ -129,14 +130,33 @@ class ChooseWord : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                competitionDAO.exitRoom(roomID!!)
-                val navController = findNavController()
-                val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
-                navController.navigate(action)
-            }
-        })
+
+
+
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
+                    builder.setCancelable(false)
+                    builder.setMessage("Do you want to go back?")
+                    builder.setPositiveButton(
+                        "Yes"
+                    ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
+                        competitionDAO.exitRoom(roomID!!)
+                        val navController = findNavController()
+                        val action = ChooseWordDirections.actionChooseWordToMultiPlayer()
+                        navController.navigate(action)
+                    }
+                    builder.setNegativeButton(
+                        "No"
+                    ) { dialog, _ -> //if user select "No", just cancel this dialog and continue with app
+                        dialog.cancel()
+                    }
+                    val alert: AlertDialog = builder.create()
+                    alert.show()
+                }
+            })
 
         val buttonOk: Button = view.findViewById(R.id.button_ok)
         buttonOk.setOnClickListener {
