@@ -71,7 +71,7 @@
             android:text="Room with this code already exists"
             android:textColor="#d22"
             android:textSize="16sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/err_not_exists"
@@ -81,7 +81,7 @@
             android:text="There is no room with this code"
             android:textColor="#d22"
             android:textSize="16sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/err_full"
@@ -91,7 +91,7 @@
             android:text="Room is already full"
             android:textColor="#d22"
             android:textSize="16sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
 
         <LinearLayout

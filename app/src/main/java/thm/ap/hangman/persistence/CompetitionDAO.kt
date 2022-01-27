@@ -1,6 +1,5 @@
 package thm.ap.hangman.persistence
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
