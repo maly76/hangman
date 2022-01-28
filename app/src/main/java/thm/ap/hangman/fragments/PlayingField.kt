@@ -293,7 +293,8 @@ class PlayingField : Fragment() {
         val word: String,
         val tries: Int,
         val success: Boolean,
-        val roomId: String?
+        val roomId: String?,
+        val categoryID: String = ""
     ) : Serializable {
     }
 

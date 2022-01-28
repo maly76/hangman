@@ -17,6 +17,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import thm.ap.hangman.adapters.CustomCategoriesAdapter
 import thm.ap.hangman.databinding.FragmentSinglePlayerBinding
+import thm.ap.hangman.gamelogic.GameLogic
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -115,6 +116,8 @@ class SinglePlayer : Fragment() {
             }
 
             val randomWord = listOfSelectedWords.random().trim()
+            val cats = querySnapshot.documents.filter { cat -> (cat.get("words") as List<String>).contains(randomWord) }
+            GameLogic.categoryId = if (cats.isEmpty()) "" else cats[0].id
             Log.e("test", randomWord)
             val action = SinglePlayerDirections.actionSinglePlayerToPlayingField("word-$randomWord")
             navController.navigate(action)

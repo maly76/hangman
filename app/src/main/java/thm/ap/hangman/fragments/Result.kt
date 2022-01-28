@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import thm.ap.hangman.databinding.FragmentResultBinding
+import thm.ap.hangman.gamelogic.GameLogic
 import thm.ap.hangman.models.Player
 import thm.ap.hangman.models.Statistic
 import thm.ap.hangman.persistence.CompetitionDAO
@@ -113,8 +114,8 @@ class Result : Fragment() {
                 }
             } else {
                 binding.result.visibility = View.GONE
+                won = if (gameResult.success) 1 else 2
             }
-
 
             if (gameResult.success) {
                 binding.successful.text = "You guessed the word successfully!"
@@ -150,7 +151,7 @@ class Result : Fragment() {
         stats: Statistic.Stats,
         gameResult: PlayingField.GameResult
     ): Statistic.Stats {
-        val categoryID = "CSPifMcrWbVK54Oke6EK"         // should be given
+        val categoryID = GameLogic.categoryId        // should be given
         // check if a rate for this category already exists
         val rates = stats.rates.filter { rate -> rate.categoryID == categoryID }
         val rate = if (rates.isEmpty()) Statistic.Rate.new(categoryID) else rates[0]
