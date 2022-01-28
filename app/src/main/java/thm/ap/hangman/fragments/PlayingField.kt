@@ -140,15 +140,6 @@ class PlayingField : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val callback = object : OnBackPressedCallback(true /** true means that the callback is enabled */) {
-            override fun handleOnBackPressed() {
-                Log.e("test", "teeeeeeeest")
-            }
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     override fun onStart() {
         super.onStart()

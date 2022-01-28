@@ -39,6 +39,8 @@ class Result : Fragment() {
 
     private lateinit var gameResult: PlayingField.GameResult
 
+    private var won: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -56,23 +58,63 @@ class Result : Fragment() {
 
         if (arguments != null) {
             gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
+            isMultiplayer = gameResult.roomId != null
             updateStats(gameResult)
             if (isMultiplayer) {
-                //TODO get oponent name from db
-                val oponentUsername = "testuser"
+                var opponentUsername = ""
 
-                if (gameResult.status == PlayingField.GameResult.Status.WON) {
-                    binding.result.text = "You Won against ${oponentUsername}!"
-                }
-                if (gameResult.status == PlayingField.GameResult.Status.LOST) {
-                    binding.result.text = "You Lost against ${oponentUsername}!"
-                }
-                if (gameResult.status == PlayingField.GameResult.Status.TIE) {
-                    binding.result.text = "The game with ${oponentUsername} is tied!"
+                competitionDAO.subscribeCompetition(gameResult.roomId!!).observe(viewLifecycleOwner) { result ->
+                    if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
+                        result.data.let { comp ->
+                            if (AuthenticationService.getCurrentUser()!!.uid == comp!!.host.id) {
+                                opponentUsername = comp.guest!!.userName!!
+                                /* Host */
+                                if (comp.guestInfos.status == Player.Status.PLAYING) {
+                                    binding.result.text = "Waiting for $opponentUsername to finish"
+                                } else {
+                                    when {
+                                        comp.hostInfos.tries > comp.guestInfos.tries -> {
+                                            binding.result.text = "You Lost against $opponentUsername!"
+                                            won = 2
+                                        }
+                                        comp.hostInfos.tries < comp.guestInfos.tries -> {
+                                            binding.result.text = "You Won against $opponentUsername!"
+                                            won = 1
+                                        }
+                                        comp.hostInfos.tries == comp.guestInfos.tries -> {
+                                            binding.result.text = "The game with $opponentUsername is tied!"
+                                            won = 3
+                                        }
+                                    }
+                                }
+                            } else {
+                                opponentUsername = comp.host!!.userName!!
+                                if (comp.guestInfos.status == Player.Status.PLAYING) {
+                                    binding.result.text = "Waiting for $opponentUsername to finish"
+                                } else {
+                                    when {
+                                        comp.guestInfos.tries > comp.hostInfos.tries -> {
+                                            binding.result.text = "You Lost against $opponentUsername!"
+                                            won = 2
+                                        }
+                                        comp.guestInfos.tries < comp.hostInfos.tries -> {
+                                            binding.result.text = "You Won against $opponentUsername!"
+                                            won = 1
+                                        }
+                                        comp.guestInfos.tries == comp.hostInfos.tries -> {
+                                            binding.result.text = "The game with $opponentUsername is tied!"
+                                            won = 3
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             } else {
                 binding.result.visibility = View.GONE
             }
+
 
             if (gameResult.success) {
                 binding.successful.text = "You guessed the word successfully!"
@@ -91,7 +133,6 @@ class Result : Fragment() {
 
     private fun updateStats(gameResult: PlayingField.GameResult) {
         val playerDAO = PlayerDAO()
-        val isMultiplayer = true
         playerDAO.getPlayerByID(AuthenticationService.getCurrentUser()!!.uid)
             .observe(viewLifecycleOwner) { result ->
                 if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
@@ -113,8 +154,8 @@ class Result : Fragment() {
         // check if a rate for this category already exists
         val rates = stats.rates.filter { rate -> rate.categoryID == categoryID }
         val rate = if (rates.isEmpty()) Statistic.Rate.new(categoryID) else rates[0]
-        when (gameResult.status) {
-            PlayingField.GameResult.Status.WON -> {
+        when (won) {
+            1 -> {
                 rate.wins++
                 if (!stats.winStreakActive) {
                     stats.oldWinStreak = 0
@@ -129,13 +170,16 @@ class Result : Fragment() {
                     stats.longestWord = gameResult.word
                 }
             }
-            PlayingField.GameResult.Status.LOST -> {
+            2 -> {
                 rate.losses++
                 stats.winStreakActive = false
             }
-            else -> {
+            3 -> {
                 rate.ties++
                 stats.winStreakActive = false
+            }
+            else -> {
+                // won is null
             }
         }
 
@@ -162,7 +206,7 @@ class Result : Fragment() {
                         "Yes"
                     ) { _, _ -> //if user pressed "yes", then he is allowed to exit from application
                         if (isMultiplayer) {
-                            competitionDAO.exitRoom(gameResult.roomId)
+                            competitionDAO.exitRoom(gameResult.roomId!!)
                         }
                         val action = ResultDirections.actionResultToMainMenu()
                         navController.navigate(action)
@@ -178,20 +222,22 @@ class Result : Fragment() {
             })
 
         binding.buttonMainMenu.setOnClickListener {
-            competitionDAO.exitRoom(gameResult.roomId)
+            if (isMultiplayer) {
+                competitionDAO.exitRoom(gameResult.roomId!!)
+            }
             val action = ResultDirections.actionResultToMainMenu()
             navController.navigate(action)
         }
 
         binding.buttonPlayAgain.setOnClickListener {
             if (isMultiplayer) {
-                competitionDAO.getCompetitionByID(gameResult.roomId)
+                competitionDAO.getCompetitionByID(gameResult.roomId!!)
                     .observe(viewLifecycleOwner) { comp ->
                         if (comp.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
                             comp.data.let {
                                 if (it!!.guestInfos.status == Player.Status.AGAIN && it.hostInfos.status == Player.Status.AGAIN) {
                                     val action =
-                                        ResultDirections.actionResultToChooseWord(gameResult.roomId)
+                                        ResultDirections.actionResultToChooseWord(gameResult.roomId!!)
                                     navController.navigate(action)
                                 }
                                 if (AuthenticationService.getCurrentUser()!!.uid == it.host.id) {
