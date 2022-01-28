@@ -67,26 +67,28 @@ class Result : Fragment() {
                     if (result.status == thm.ap.hangman.models.Result.Status.SUCCESS) {
                         result.data.let { comp ->
                             if (AuthenticationService.getCurrentUser()!!.uid == comp!!.host.id) {
-                                opponentUsername = comp.guest!!.userName!!
-                                /* Host */
-                                if (comp.guestInfos.status == Player.Status.PLAYING) {
-                                    binding.result.text = "Waiting for $opponentUsername to finish"
-                                } else {
-                                    when {
-                                        comp.hostInfos.tries > comp.guestInfos.tries -> {
-                                            binding.result.text = "You Lost against $opponentUsername!"
-                                            won = 2
+                                if (comp.guest != null) {
+                                    opponentUsername = comp.guest!!.userName!!
+                                    /* Host */
+                                    if (comp.guestInfos.status == Player.Status.PLAYING) {
+                                        binding.result.text = "Waiting for $opponentUsername to finish"
+                                    } else {
+                                        when {
+                                            comp.hostInfos.tries > comp.guestInfos.tries -> {
+                                                binding.result.text = "You Lost against $opponentUsername!"
+                                                won = 2
+                                            }
+                                            comp.hostInfos.tries < comp.guestInfos.tries -> {
+                                                binding.result.text = "You Won against $opponentUsername!"
+                                                won = 1
+                                            }
+                                            comp.hostInfos.tries == comp.guestInfos.tries -> {
+                                                binding.result.text = "The game with $opponentUsername is tied!"
+                                                won = 3
+                                            }
                                         }
-                                        comp.hostInfos.tries < comp.guestInfos.tries -> {
-                                            binding.result.text = "You Won against $opponentUsername!"
-                                            won = 1
-                                        }
-                                        comp.hostInfos.tries == comp.guestInfos.tries -> {
-                                            binding.result.text = "The game with $opponentUsername is tied!"
-                                            won = 3
-                                        }
+                                        updateStats(gameResult)
                                     }
-                                    updateStats(gameResult)
                                 }
                             } else {
                                 // Guest
