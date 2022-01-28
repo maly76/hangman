@@ -60,7 +60,6 @@ class Result : Fragment() {
         if (arguments != null) {
             gameResult = requireArguments().get("GameResult") as PlayingField.GameResult
             isMultiplayer = gameResult.roomId != null
-            updateStats(gameResult)
             if (isMultiplayer) {
                 var opponentUsername = ""
 
@@ -87,10 +86,12 @@ class Result : Fragment() {
                                             won = 3
                                         }
                                     }
+                                    updateStats(gameResult)
                                 }
                             } else {
+                                // Guest
                                 opponentUsername = comp.host!!.userName!!
-                                if (comp.guestInfos.status == Player.Status.PLAYING) {
+                                if (comp.hostInfos.status == Player.Status.PLAYING) {
                                     binding.result.text = "Waiting for $opponentUsername to finish"
                                 } else {
                                     when {
@@ -107,6 +108,7 @@ class Result : Fragment() {
                                             won = 3
                                         }
                                     }
+                                    updateStats(gameResult)
                                 }
                             }
                         }
